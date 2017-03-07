@@ -1,0 +1,64 @@
+# depslib dependency file v1.0
+1487324575 source:c:\git_repo\graphicsproject\main.cpp
+	"Game.h"
+
+1488871163 c:\git_repo\graphicsproject\game.h
+	"graphics.hpp"
+	"Logger.h"
+	"Window.h"
+	"fstream"
+
+1488872890 source:c:\git_repo\graphicsproject\game.cpp
+	"Game.h"
+
+1487323098 c:\git_repo\graphicsproject\include\graphics.hpp
+	<string>
+
+1487325078 c:\git_repo\graphicsproject\logger.h
+	<iostream>
+
+1488277790 source:c:\git_repo\graphicsproject\window.cpp
+	"Window.h"
+	<cstdlib>
+	<time.h>
+	"Logger.h"
+
+1487332239 c:\git_repo\graphicsproject\window.h
+	<list>
+	"Mario.h"
+	"Ground.h"
+
+1488282283 c:\git_repo\graphicsproject\mario.h
+	"Position.h"
+	"Terrain.h"
+	"graphics.hpp"
+
+1487332872 c:\git_repo\graphicsproject\position.h
+
+1488872879 c:\git_repo\graphicsproject\ground.h
+	"Terrain.h"
+	"Color.h"
+	"graphics.hpp"
+
+1488872836 c:\git_repo\graphicsproject\terrain.h
+	"Color.h"
+	"Position.h"
+	"graphics.hpp"
+	"Widget.h"
+
+1487327972 c:\git_repo\graphicsproject\color.h
+
+1488872865 source:c:\git_repo\graphicsproject\ground.cpp
+	"Ground.h"
+
+1488872825 source:c:\git_repo\graphicsproject\terrain.cpp
+	"Terrain.h"
+
+1488872815 c:\git_repo\graphicsproject\widget.h
+	"graphics.hpp"
+	"Color.h"
+	"Logger.h"
+
+1488872901 source:c:\git_repo\graphicsproject\mario.cpp
+	"Mario.h"
+
