@@ -64,9 +64,9 @@ void Game::drawBackgound()
 
 void Game::drawMario()
 {
-    if(mario.getPosition().y < 484 && movingRight)
+    if(mario.getSpeed() != 0 && movingRight)
         gout << stamp(marioJumpRightTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getPosition().y < 484 && movingLeft)
+    else if(mario.getSpeed() != 0 && movingLeft)
         gout << stamp(marioJumpLeftTexture,mario.getPosition().x,mario.getPosition().y);
     else if(movingLeft && (ev.time / 30) % 10 < 5)
         gout << stamp(marioRunLeftTexture,mario.getPosition().x,mario.getPosition().y);
@@ -76,7 +76,7 @@ void Game::drawMario()
         gout << stamp(marioRunRightTexture,mario.getPosition().x,mario.getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 >= 5)
         gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getPosition().y < 484)
+    else if(mario.getSpeed() != 0)
         gout << stamp(marioJumpRightTexture,mario.getPosition().x,mario.getPosition().y);
     else gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
 

@@ -17,6 +17,7 @@ public:
     void fall(int groundLevel);
 
     int getDistance() {return distance;}
+    int getSpeed() {return speed;}
 
 private:
     int distance = 50;

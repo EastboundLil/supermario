@@ -1,13 +1,13 @@
 #include "Mario.h"
 
 Mario::Mario() :
-    Terrain(Position(100,116), "mario", 50)
+    Terrain(Position(100,116), "mario", 64)
 {
 
 }
 
 Mario::Mario(int x, int y) :
-    Terrain(Position(x,y), "mario", 50)
+    Terrain(Position(x,y), "mario", 64)
 {
 
 }
@@ -34,7 +34,7 @@ void Mario::jump()
 
 void Mario::fall(int groundLevel)
 {
-    LOG(groundLevel);
+    groundLevel -= height;
     if(position.y < groundLevel)
     {
         position.y += speed;
