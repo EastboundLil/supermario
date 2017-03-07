@@ -1,10 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <list>
 
-#include "Mario.h"
-#include "Ground.h"
 
 class Window
 {

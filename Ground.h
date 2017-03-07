@@ -10,7 +10,7 @@ using namespace genv;
 class Ground : public Terrain
 {
 public:
-    Ground(std::string type);
+    Ground();
 private:
 
 };

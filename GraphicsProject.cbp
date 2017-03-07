@@ -54,6 +54,8 @@
 		<Unit filename="Mario.h">
 			<Option target="Debug" />
 		</Unit>
+		<Unit filename="Pipe.cpp" />
+		<Unit filename="Pipe.h" />
 		<Unit filename="Position.h">
 			<Option target="Debug" />
 		</Unit>

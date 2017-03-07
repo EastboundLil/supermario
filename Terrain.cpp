@@ -1,8 +1,9 @@
 #include "Terrain.h"
 
-Terrain::Terrain(Position position, std::string type) :
+Terrain::Terrain(Position position, std::string type, int height) :
     position(position),
-    widget(type)
+    widget(type),
+    height(height)
 {
 
 }

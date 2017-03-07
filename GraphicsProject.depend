@@ -62,3 +62,69 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
+1488887593 source:c:\git_repo\beadando\game.cpp
+	"Game.h"
+
+1488887545 c:\git_repo\beadando\game.h
+	"graphics.hpp"
+	"Logger.h"
+	"fstream"
+	<vector>
+	"Mario.h"
+	"Ground.h"
+	"Pipe.h"
+
+1488878509 c:\git_repo\beadando\include\graphics.hpp
+	<string>
+
+1487325078 c:\git_repo\beadando\logger.h
+	<iostream>
+
+1487332239 c:\git_repo\beadando\window.h
+	<list>
+	"Mario.h"
+	"Ground.h"
+
+1488887488 c:\git_repo\beadando\mario.h
+	"Position.h"
+	"Terrain.h"
+	"graphics.hpp"
+
+1487332872 c:\git_repo\beadando\position.h
+
+1488886966 c:\git_repo\beadando\terrain.h
+	"Color.h"
+	"Position.h"
+	"graphics.hpp"
+	"Widget.h"
+
+1487327972 c:\git_repo\beadando\color.h
+
+1488872815 c:\git_repo\beadando\widget.h
+	"graphics.hpp"
+	"Color.h"
+	"Logger.h"
+
+1488886818 c:\git_repo\beadando\ground.h
+	"Terrain.h"
+	"Color.h"
+	"graphics.hpp"
+
+1488886902 source:c:\git_repo\beadando\ground.cpp
+	"Ground.h"
+
+1487324575 source:c:\git_repo\beadando\main.cpp
+	"Game.h"
+
+1488887499 source:c:\git_repo\beadando\mario.cpp
+	"Mario.h"
+
+1488886708 source:c:\git_repo\beadando\terrain.cpp
+	"Terrain.h"
+
+1488886847 c:\git_repo\beadando\pipe.h
+	"Terrain.h"
+
+1488886937 source:c:\git_repo\beadando\pipe.cpp
+	"Pipe.h"
+

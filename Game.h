@@ -3,8 +3,11 @@
 
 #include "graphics.hpp"
 #include "Logger.h"
-#include "Window.h"
 #include "fstream"
+#include <vector>
+#include "Mario.h"
+#include "Ground.h"
+#include "Pipe.h"
 
 using namespace genv;
 
@@ -21,21 +24,34 @@ private:
     void drawMario();
     void readBackgroundTexture();
     void readGroundTexture();
+    void readPipeTexture();
+    void readMarioTexture();
+    void readMarioJumpTexture();
+    void readMarioRunTexture();
+    canvas readTexture(std::string filename);
 
-    std::list<Terrain*> getLevel();
+    std::vector<Terrain*> getLevel();
 
     const int WINDOW_HEIGHT;
     const int WINDOW_WIDTH;
 
-    std::list<Terrain*> level;
+    std::vector<Terrain*> level;
     event ev;
-    Window window;
     Mario mario;
     canvas backgroundTexture;
     canvas groundTexture;
-    canvas marioTexture;
+    canvas pipeTexture;
+    canvas marioRightTexture;
+    canvas marioLeftTexture;
+    canvas marioJumpRightTexture;
+    canvas marioJumpLeftTexture;
+    canvas marioRunRightTexture;
+    canvas marioRunLeftTexture;
 
     std::fstream f;
+
+    bool movingRight = false;
+    bool movingLeft = false;
 };
 
 #endif // GAME_H
