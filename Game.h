@@ -6,8 +6,7 @@
 #include "fstream"
 #include <vector>
 #include "Mario.h"
-#include "Ground.h"
-#include "Pipe.h"
+#include "TextureTypes.h"
 
 using namespace genv;
 

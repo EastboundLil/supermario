@@ -3,7 +3,7 @@
 Game::Game() :
     WINDOW_HEIGHT(600),
     WINDOW_WIDTH(1000),
-    mario(50,WINDOW_HEIGHT-116)
+    mario(WINDOW_WIDTH/2,0)
 {
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
 
@@ -21,16 +21,21 @@ void Game::run()
     gin.timer(1);
 
     while(gin >> ev && ev.keycode != key_escape) {
-        if(ev.keycode == key_right) movingRight = true;
-        if(ev.keycode == -key_right) movingRight = false;
-        if(ev.keycode == key_left) movingLeft = true;
-        if(ev.keycode == -key_left) movingLeft = false;
-        if(ev.keycode == key_up) mario.jump();
+
+        int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at(mario.getDistance()/50)->getHeight();
+        int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)-1)->getHeight();
+        int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)+1)->getHeight();
+
+        if(ev.keycode == key_right)     movingRight = true;
+        if(ev.keycode == -key_right)    movingRight = false;
+        if(ev.keycode == key_left)      movingLeft = true;
+        if(ev.keycode == -key_left)     movingLeft = false;
+        if(ev.keycode == key_up)        mario.jump();
         if(ev.type == ev_timer)
         {
-            if(movingRight) mario.moveRight();
-            if(movingLeft) mario.moveLeft();
-            mario.fall(WINDOW_HEIGHT - level.at(mario.getDistance()/50)->getHeight());
+            if(movingRight) mario.moveRight(NEXT_HEIGHT);
+            if(movingLeft) mario.moveLeft(PREV_HEIGHT);
+            mario.fall(CURRENT_HEIGHT);
         }
 
         draw();
@@ -45,11 +50,12 @@ void Game::draw()
     drawBackgound();
     drawMario();
 
-    int offset = 0;
+    int offset = 500;
     for(Terrain *it : level)
     {
-        if(it->getWidget().getType() == "ground") gout << stamp(groundTexture, offset,WINDOW_HEIGHT-it->getHeight());
-        else if(it->getWidget().getType() == "pipe") gout << stamp(pipeTexture, offset,WINDOW_HEIGHT-it->getHeight());
+        if(it->getWidget().getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getWidget().getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getWidget().getType() == "end") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
 
         offset += 50;
     }
@@ -323,11 +329,18 @@ void Game::readMarioRunTexture()
 void Game::generateLevel()
 {
     //srand(time(NULL));
-
-    for(int i = 0; i < 20; ++i)
+    level.push_back(new Ground());
+    level.push_back(new End());
+    for(int i = 0; i < 10; ++i)
+    {
+        level.push_back(new Ground());
+    }
+    for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0) level.push_back(new Pipe());
         else level.push_back(new Ground());
     }
-    LOG("level size: " << level.size());
+    level.push_back(new End());
+    level.push_back(new Ground());
+    LOG(level.size());
 }

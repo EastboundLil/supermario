@@ -11,8 +11,8 @@ public:
     Mario();
     Mario(int x, int y);
 
-    void moveRight();
-    void moveLeft();
+    void moveRight(int height);
+    void moveLeft(int height);
     void jump();
     void fall(int groundLevel);
 
@@ -20,7 +20,7 @@ public:
     int getSpeed() {return speed;}
 
 private:
-    int distance = 50;
+    int distance = 300;
     int acceleration = 1;
     int speed = 0;
     int horizontalSpeed = 5;
