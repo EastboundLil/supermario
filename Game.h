@@ -17,6 +17,7 @@ public:
     void run();
 
 private:
+    bool newGame();
     void generateLevel();
     void draw();
     void drawBackgound();

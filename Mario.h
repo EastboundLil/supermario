@@ -2,28 +2,19 @@
 #define MARIO_H
 
 #include "Position.h"
-#include "Terrain.h"
+#include "Enemy.h"
 #include "graphics.hpp"
 
-class Mario : public Terrain
+class Mario : public Enemy
 {
 public:
     Mario();
     Mario(int x, int y);
 
-    void moveRight(int height);
-    void moveLeft(int height);
-    void jump();
-    void fall(int groundLevel);
+    void reset(int x, int y);
 
-    int getDistance() {return distance;}
-    int getSpeed() {return speed;}
-
-private:
-    int distance = 300;
-    int acceleration = 1;
-    int speed = 0;
-    int horizontalSpeed = 5;
+    void moveLeft(int prev);
+    void moveRight(int next);
 };
 
 #endif // MARIO_H

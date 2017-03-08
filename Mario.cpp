@@ -1,15 +1,22 @@
 #include "Mario.h"
 
 Mario::Mario() :
-    Terrain(Position(100,116), "mario", 64)
+    Enemy(Position(100,116), "mario", 64, 300, 5)
 {
 
 }
 
 Mario::Mario(int x, int y) :
-    Terrain(Position(x,y), "mario", 64)
+    Enemy(Position(x,y), "mario", 64, 300, 5)
 {
+    distance = 300;
+    horizontalSpeed = 5;
+}
 
+void Mario::reset(int x, int y)
+{
+    setPosition(x,y);
+    distance = 300;
 }
 
 void Mario::moveRight(int next)
@@ -17,7 +24,6 @@ void Mario::moveRight(int next)
     if(next >= position.y + height)
     {
         distance += horizontalSpeed;
-        //if(distance <= 600) position.x += horizontalSpeed;
     }
 }
 
@@ -26,11 +32,10 @@ void Mario::moveLeft(int prev)
     if(prev >= position.y + height)
     {
         distance -= horizontalSpeed;
-        //if(distance <= 600) position.x -= horizontalSpeed;
     }
 }
 
-void Mario::jump()
+/*void Mario::jump()
 {
     if(speed == 0) speed = -20;
     position.y--;
@@ -49,7 +54,7 @@ void Mario::fall(int groundLevel)
         speed = 0;
         position.y = groundLevel;
     }
-}
+}*/
 
 
 

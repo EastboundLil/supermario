@@ -2,8 +2,7 @@
 
 Game::Game() :
     WINDOW_HEIGHT(600),
-    WINDOW_WIDTH(1000),
-    mario(WINDOW_WIDTH/2,0)
+    WINDOW_WIDTH(1000)
 {
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
 
@@ -15,12 +14,16 @@ Game::Game() :
     readMarioRunTexture();
 }
 
-void Game::run()
+bool Game::newGame()
 {
+    bool endLevel = false;
+    mario.reset(WINDOW_WIDTH/2,0);
     generateLevel();
     gin.timer(1);
 
-    while(gin >> ev && ev.keycode != key_escape) {
+    while(gin >> ev && ev.keycode != key_space && !endLevel) {
+
+        if(ev.keycode == key_escape) return false;
 
         int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at(mario.getDistance()/50)->getHeight();
         int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)-1)->getHeight();
@@ -39,8 +42,16 @@ void Game::run()
         }
 
         draw();
+        if(mario.getPosition().y > WINDOW_HEIGHT) endLevel = true;
     }
+    return true;
+}
 
+void Game::run()
+{
+    while(newGame())
+    {
+    }
 }
 
 void Game::draw()
@@ -328,14 +339,21 @@ void Game::readMarioRunTexture()
 
 void Game::generateLevel()
 {
+
+    for(Terrain* it : level)
+    {
+        delete it;
+    }
+    level.clear();
+
     //srand(time(NULL));
     level.push_back(new Ground());
     level.push_back(new End());
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 20; ++i)
     {
         level.push_back(new Ground());
     }
-    for(int i = 0; i < 50; ++i)
+    /*for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0) level.push_back(new Pipe());
         else if((i+1) % 7 == 0)
@@ -345,8 +363,7 @@ void Game::generateLevel()
             level.push_back(new Cliff());
         }
         else level.push_back(new Ground());
-    }
+    }*/
     level.push_back(new End());
     level.push_back(new Ground());
-    LOG(level.size());
 }
