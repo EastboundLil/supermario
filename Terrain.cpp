@@ -2,20 +2,10 @@
 
 Terrain::Terrain(Position position, std::string type, int height) :
     position(position),
-    widget(type),
+    type(type),
     height(height)
 {
 
-}
-
-Position Terrain::getPosition() const
-{
-    return position;
-}
-
-Widget Terrain::getWidget() const
-{
-    return widget;
 }
 
 void Terrain::setPosition(int x, int y)

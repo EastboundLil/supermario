@@ -21,4 +21,12 @@ public:
     End() : Terrain(Position(), "end", 500) {}
 };
 
+class Cliff : public Terrain
+{
+public:
+    Cliff() : Terrain(Position(), "cliff", -100) {}
+};
+
+
+
 #endif // TEXTURETYPES_H

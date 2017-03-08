@@ -12,8 +12,8 @@ class Terrain
 {
 public:
     Terrain(Position position, std::string type, int height);
-    Position getPosition() const;
-    Widget getWidget() const;
+    Position getPosition() const {return position;};
+    std::string getType() const {return type;};
 
     void setPosition(int x, int y);
     void setPosition(Position pos);
@@ -21,7 +21,7 @@ public:
 
 protected:
     Position position;
-    Widget widget;
+    std::string type;
     int height;
 
 };

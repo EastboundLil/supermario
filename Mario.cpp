@@ -14,22 +14,18 @@ Mario::Mario(int x, int y) :
 
 void Mario::moveRight(int next)
 {
-    LOG("next height: " << next);
     if(next >= position.y + height)
     {
         distance += horizontalSpeed;
-        LOG("distance: " << distance);
         //if(distance <= 600) position.x += horizontalSpeed;
     }
 }
 
 void Mario::moveLeft(int prev)
 {
-    LOG("prev height: " << prev);
     if(prev >= position.y + height)
     {
         distance -= horizontalSpeed;
-        LOG("distance: " << distance);
         //if(distance <= 600) position.x -= horizontalSpeed;
     }
 }

@@ -53,9 +53,9 @@ void Game::draw()
     int offset = 500;
     for(Terrain *it : level)
     {
-        if(it->getWidget().getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getWidget().getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getWidget().getType() == "end") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        if(it->getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getType() == "end") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
 
         offset += 50;
     }
@@ -338,6 +338,12 @@ void Game::generateLevel()
     for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0) level.push_back(new Pipe());
+        else if((i+1) % 7 == 0)
+        {
+            level.push_back(new Cliff());
+            level.push_back(new Cliff());
+            level.push_back(new Cliff());
+        }
         else level.push_back(new Ground());
     }
     level.push_back(new End());
