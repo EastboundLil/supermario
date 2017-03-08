@@ -15,6 +15,12 @@ public:
     Pipe() : Terrain(Position(), "pipe", 230) {}
 };
 
+class PipeHelper : public Terrain
+{
+public:
+    PipeHelper() : Terrain(Position(), "pipehelper", 230) {}
+};
+
 class End : public Terrain
 {
 public:

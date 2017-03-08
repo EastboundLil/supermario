@@ -25,7 +25,7 @@ bool Game::newGame()
 
         if(ev.keycode == key_escape) return false;
 
-        int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at(mario.getDistance()/50)->getHeight();
+        int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at((mario.getDistance()+25)/50)->getHeight();
         int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)-1)->getHeight();
         int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)+1)->getHeight();
 
@@ -353,9 +353,13 @@ void Game::generateLevel()
     {
         level.push_back(new Ground());
     }
-    /*for(int i = 0; i < 50; ++i)
+    for(int i = 0; i < 50; ++i)
     {
-        if((i+1) % 10 == 0) level.push_back(new Pipe());
+        if((i+1) % 10 == 0)
+        {
+            level.push_back(new Pipe());
+            level.push_back(new PipeHelper());
+        }
         else if((i+1) % 7 == 0)
         {
             level.push_back(new Cliff());
@@ -363,7 +367,7 @@ void Game::generateLevel()
             level.push_back(new Cliff());
         }
         else level.push_back(new Ground());
-    }*/
+    }
     level.push_back(new End());
     level.push_back(new Ground());
 }
