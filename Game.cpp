@@ -19,6 +19,10 @@ Game::Game() :
     readRedKoopaMoveTexture();
     readBlueKoopaTexture();
     readBlueKoopaMoveTexture();
+    readYellowKoopaTexture();
+    readYellowKoopaMoveTexture();
+    readBlackKoopaTexture();
+    readBlackKoopaMoveTexture();
 }
 
 bool Game::newGame()
@@ -27,36 +31,50 @@ bool Game::newGame()
     mario.reset(WINDOW_WIDTH/2,0);
     generateLevel();
     gin.timer(1);
+    movingRight = false;
+    movingLeft = false;
 
-    while(gin >> ev && ev.keycode != key_space && !endLevel) {
+    while(gin >> ev && ev.keycode != key_space) {
 
-        if(ev.keycode == key_escape) return false;
-
-        int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at((mario.getDistance()+25)/50)->getHeight();
-        int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50))->getHeight();
-        int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)+1)->getHeight();
-
-        if(ev.keycode == key_right)     movingRight = true;
-        if(ev.keycode == -key_right)    movingRight = false;
-        if(ev.keycode == key_left)      movingLeft = true;
-        if(ev.keycode == -key_left)     movingLeft = false;
-        if(ev.keycode == key_up)        mario.jump();
-
-        if(movingRight) mario.moveRight(NEXT_HEIGHT);
-        if(movingLeft) mario.moveLeft(PREV_HEIGHT);
-        mario.fall(CURRENT_HEIGHT);
-
-        for(Enemy* it : enemies)
+        if(endLevel)
         {
-            it->move(WINDOW_HEIGHT - level.at(((it->getDistance())/50))->getHeight(),
-                     WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight());
-            it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
+            mario.fall(WINDOW_HEIGHT+7000);
+            if(mario.getHeight()+mario.getPosition().y == WINDOW_HEIGHT+7000) break;
+        }
+        else
+        {
+            if(ev.keycode == key_escape) return false;
+
+            int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at((mario.getDistance()+25)/50)->getHeight();
+            int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50))->getHeight();
+            int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)+1)->getHeight();
+
+            if(ev.keycode == key_right)     movingRight = true;
+            if(ev.keycode == -key_right)    movingRight = false;
+            if(ev.keycode == key_left)      movingLeft = true;
+            if(ev.keycode == -key_left)     movingLeft = false;
+            if(ev.keycode == key_up)        mario.jump();
+
+            if(movingRight) mario.moveRight(NEXT_HEIGHT);
+            if(movingLeft) mario.moveLeft(PREV_HEIGHT);
+            mario.fall(CURRENT_HEIGHT);
+
+            for(Enemy* it : enemies)
+            {
+                if(ev.keycode == key_up)
+                    it->jump();
+                it->move(WINDOW_HEIGHT - level.at(((it->getDistance())/50))->getHeight(),
+                         WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight(),
+                         mario.getDistance());
+                it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
+            }
+            endLevel = collided() || fallen();
+            if(endLevel) mario.jump();
         }
 
         draw();
-
-        endLevel = collided() || fallen();
     }
+
     return true;
 }
 
@@ -102,10 +120,12 @@ void Game::generateLevel()
 
     for(int i=0; i < 1; i++)
     {
-        enemies.push_back(new Goomba(750+(i*50)));
-        enemies.push_back(new Koopa(850+(i*50)));
-        enemies.push_back(new RedKoopa(950+(i*50)));
-        enemies.push_back(new BlueKoopa(1050+(i*50)));
+        enemies.push_back(new Goomba(750));
+        enemies.push_back(new Koopa(850));
+        enemies.push_back(new RedKoopa(950));
+        enemies.push_back(new BlueKoopa(1050));
+        enemies.push_back(new YellowKoopa(1000));
+        enemies.push_back(new BlackKoopa(720));
     }
 
 }
@@ -150,8 +170,8 @@ void Game::run()
 void Game::draw()
 {
     drawBackgound();
-    drawMario();
     drawLevel();
+    drawMario();
     drawEnemies();
 
     gout << refresh;
@@ -238,6 +258,26 @@ void Game::drawEnemies()
             gout << stamp(blueKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
         else if(it->getType() == "bluekoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(blueKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+
+        //////////////////YELLOW KOOPA//////////////////
+        else if(it->getType() == "yellowkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(yellowKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "yellowkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(yellowKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "yellowkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(yellowKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "yellowkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(yellowKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+
+        //////////////////BLACK KOOPA//////////////////
+        else if(it->getType() == "blackkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(blackKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "blackkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(blackKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "blackkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(blackKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "blackkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(blackKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
     }
 }
 
@@ -751,3 +791,160 @@ void Game::readBlueKoopaMoveTexture()
     f.close();
     //groundTexture = C;
 }
+
+void Game::readYellowKoopaTexture()
+{
+    f.open("pics/yellowKoopaStand.kep");
+    //canvas C;
+
+    yellowKoopaLeftTexture.transparent(true);
+    yellowKoopaRightTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        yellowKoopaLeftTexture.open(w,h);
+        yellowKoopaRightTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                yellowKoopaLeftTexture << move_to(j,i);
+                yellowKoopaLeftTexture << color(r,g,b);
+                yellowKoopaLeftTexture << dot;
+
+                yellowKoopaRightTexture << move_to(w-j,i);
+                yellowKoopaRightTexture << color(r,g,b);
+                yellowKoopaRightTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readYellowKoopaMoveTexture()
+{
+    f.open("pics/yellowKoopaMove.kep");
+    //canvas C;
+
+    yellowKoopaLeftMoveTexture.transparent(true);
+    yellowKoopaRightMoveTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        yellowKoopaLeftMoveTexture.open(w,h);
+        yellowKoopaRightMoveTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                yellowKoopaLeftMoveTexture << move_to(j,i);
+                yellowKoopaLeftMoveTexture << color(r,g,b);
+                yellowKoopaLeftMoveTexture << dot;
+
+                yellowKoopaRightMoveTexture << move_to(w-j,i);
+                yellowKoopaRightMoveTexture << color(r,g,b);
+                yellowKoopaRightMoveTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readBlackKoopaTexture()
+{
+    f.open("pics/blackKoopaStand.kep");
+    //canvas C;
+
+    blackKoopaLeftTexture.transparent(true);
+    blackKoopaRightTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        blackKoopaLeftTexture.open(w,h);
+        blackKoopaRightTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                blackKoopaLeftTexture << move_to(j,i);
+                blackKoopaLeftTexture << color(r,g,b);
+                blackKoopaLeftTexture << dot;
+
+                blackKoopaRightTexture << move_to(w-j,i);
+                blackKoopaRightTexture << color(r,g,b);
+                blackKoopaRightTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readBlackKoopaMoveTexture()
+{
+    f.open("pics/blackKoopaMove.kep");
+    //canvas C;
+
+    blackKoopaLeftMoveTexture.transparent(true);
+    blackKoopaRightMoveTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        blackKoopaLeftMoveTexture.open(w,h);
+        blackKoopaRightMoveTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                blackKoopaLeftMoveTexture << move_to(j,i);
+                blackKoopaLeftMoveTexture << color(r,g,b);
+                blackKoopaLeftMoveTexture << dot;
+
+                blackKoopaRightMoveTexture << move_to(w-j,i);
+                blackKoopaRightMoveTexture << color(r,g,b);
+                blackKoopaRightMoveTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+

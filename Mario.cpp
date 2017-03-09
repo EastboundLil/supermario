@@ -36,5 +36,9 @@ void Mario::moveLeft(int prev)
     movingLeft = true;
 }
 
-
+void Mario::jump()
+{
+        if(speed == 0) speed = -20;
+        position.y--;
+}
 

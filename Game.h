@@ -46,6 +46,10 @@ private:
     void readRedKoopaMoveTexture();
     void readBlueKoopaTexture();
     void readBlueKoopaMoveTexture();
+    void readYellowKoopaTexture();
+    void readYellowKoopaMoveTexture();
+    void readBlackKoopaTexture();
+    void readBlackKoopaMoveTexture();
     canvas readTexture(std::string filename);
 
     std::vector<Terrain*> getLevel();
@@ -81,6 +85,14 @@ private:
     canvas blueKoopaRightTexture;
     canvas blueKoopaLeftMoveTexture;
     canvas blueKoopaRightMoveTexture;
+    canvas yellowKoopaLeftTexture;
+    canvas yellowKoopaRightTexture;
+    canvas yellowKoopaLeftMoveTexture;
+    canvas yellowKoopaRightMoveTexture;
+    canvas blackKoopaLeftTexture;
+    canvas blackKoopaRightTexture;
+    canvas blackKoopaLeftMoveTexture;
+    canvas blackKoopaRightMoveTexture;
 
 
     std::fstream f;

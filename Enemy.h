@@ -17,7 +17,7 @@ public:
 
     }
 
-    virtual void move(int prev, int next)
+    virtual void move(int prev, int next, int distance)
     {
         if(movingLeft) moveLeft(prev);
         else moveRight(next);
@@ -45,8 +45,7 @@ public:
 
     virtual void jump()
     {
-        if(speed == 0) speed = -20;
-        position.y--;
+        //do nothing;
     }
 
     virtual void fall(int groundLevel)

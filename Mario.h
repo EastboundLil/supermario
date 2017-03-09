@@ -15,6 +15,7 @@ public:
 
     void moveLeft(int prev);
     void moveRight(int next);
+    void jump();
 };
 
 #endif // MARIO_H
