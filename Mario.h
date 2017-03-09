@@ -16,6 +16,7 @@ public:
     void moveLeft(int prev);
     void moveRight(int next);
     void jump();
+    void setSpeed(int s) {speed = s;}
 };
 
 #endif // MARIO_H

@@ -12,9 +12,9 @@ public:
 class Koopa : public Enemy
 {
 protected:
-    Koopa(int distance, std::string type) : Enemy(Position(800,100), type, 76, distance, 1) {}
+    Koopa(int distance, std::string type) : Enemy(Position(800,100), type, 76, distance, 1) { health = 2; }
 public:
-    Koopa(int distance) : Enemy(Position(800,100), "koopa", 76, distance, 1) {}
+    Koopa(int distance) : Enemy(Position(800,100), "koopa", 76, distance, 1) { health = 2; }
 };
 
 class RedKoopa : public Koopa
@@ -97,4 +97,9 @@ public:
     }
 };
 
+class Spiny : public RedKoopa
+{
+public:
+    Spiny(int distance) : RedKoopa(distance,"spiny") { height = 54; thorned = true;}
+};
 #endif // ENEMYTYPES_H

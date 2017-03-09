@@ -36,9 +36,12 @@ private:
     void readBackgroundTexture();
     void readGroundTexture();
     void readPipeTexture();
+    void readEndTexture();
+
     void readMarioTexture();
     void readMarioJumpTexture();
     void readMarioRunTexture();
+
     void readGoombaTexture();
     void readKoopaTexture();
     void readKoopaMoveTexture();
@@ -50,6 +53,8 @@ private:
     void readYellowKoopaMoveTexture();
     void readBlackKoopaTexture();
     void readBlackKoopaMoveTexture();
+    void readSpinyTexture();
+    void readSpinyMoveTexture();
     canvas readTexture(std::string filename);
 
     std::vector<Terrain*> getLevel();
@@ -65,12 +70,15 @@ private:
     canvas backgroundTexture;
     canvas groundTexture;
     canvas pipeTexture;
+    canvas endTexture;
+
     canvas marioRightTexture;
     canvas marioLeftTexture;
     canvas marioJumpRightTexture;
     canvas marioJumpLeftTexture;
     canvas marioRunRightTexture;
     canvas marioRunLeftTexture;
+
     canvas goombaLeftTexture;
     canvas goombaRightTexture;
     canvas koopaLeftTexture;
@@ -93,6 +101,10 @@ private:
     canvas blackKoopaRightTexture;
     canvas blackKoopaLeftMoveTexture;
     canvas blackKoopaRightMoveTexture;
+    canvas spinyLeftTexture;
+    canvas spinyLeftMoveTexture;
+    canvas spinyRightTexture;
+    canvas spinyRightMoveTexture;
 
 
     std::fstream f;

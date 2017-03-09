@@ -27,6 +27,12 @@ public:
     End() : Terrain(Position(), "end", 500) {}
 };
 
+class EndHelper : public Terrain
+{
+public:
+    EndHelper() : Terrain(Position(), "endhelper", 500) {}
+};
+
 class Cliff : public Terrain
 {
 public:

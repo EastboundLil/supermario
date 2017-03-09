@@ -12,7 +12,9 @@ public:
         horizontalSpeed(horizontalSpeed),
         acceleration(1),
         speed(0),
-        movingLeft(true)
+        movingLeft(true),
+        health(1),
+        thorned(false)
     {
 
     }
@@ -63,19 +65,24 @@ public:
         }
     }
 
-    int getDistance() {return distance;}
-    int getSpeed() {return speed;}
-    bool changeDirection() {movingLeft = !movingLeft;}
-    bool getMovingLeft() {return movingLeft;}
+    int     getDistance()       {return distance;}
+    int     getSpeed()          {return speed;}
+    bool    isMovingLeft()      {return movingLeft;}
+    int     getHealth()         {return health;}
+    bool    isThorned()         {return thorned;}
 
-    void zeroSpeed() {speed = 0;}
+    void zeroSpeed()        {speed = 0;}
+    void changeDirection()  {movingLeft = !movingLeft;}
+    void decrementHealth()  {health--;}
 
 protected:
-    int distance;
-    int acceleration;
-    int speed;
-    int horizontalSpeed;
-    bool movingLeft;
+    int     distance;
+    int     acceleration;
+    int     speed;
+    int     horizontalSpeed;
+    bool    movingLeft;
+    int     health;
+    bool    thorned;
 };
 
 #endif // ENEMY_H

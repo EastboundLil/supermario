@@ -9,9 +9,12 @@ Game::Game() :
     readBackgroundTexture();
     readGroundTexture();
     readPipeTexture();
+    readEndTexture();
+
     readMarioTexture();
     readMarioJumpTexture();
     readMarioRunTexture();
+
     readGoombaTexture();
     readKoopaTexture();
     readKoopaMoveTexture();
@@ -23,6 +26,8 @@ Game::Game() :
     readYellowKoopaMoveTexture();
     readBlackKoopaTexture();
     readBlackKoopaMoveTexture();
+    readSpinyTexture();
+    readSpinyMoveTexture();
 }
 
 bool Game::newGame()
@@ -69,7 +74,11 @@ bool Game::newGame()
                 it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
             }
             endLevel = collided() || fallen();
-            if(endLevel) mario.jump();
+            if(endLevel)
+            {
+                mario.setSpeed(0);
+                mario.jump();
+            }
         }
 
         draw();
@@ -96,11 +105,12 @@ void Game::generateLevel()
     srand(time(NULL));
     level.push_back(new Ground());
     level.push_back(new End());
+    level.push_back(new EndHelper());
     for(int i = 0; i < 20; ++i)
     {
         level.push_back(new Ground());
     }
-    for(int i = 0; i < 50; ++i)
+    /*for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0)
         {
@@ -114,18 +124,19 @@ void Game::generateLevel()
             level.push_back(new Cliff());
         }
         else level.push_back(new Ground());
-    }
+    }*/
     level.push_back(new End());
     level.push_back(new Ground());
 
     for(int i=0; i < 1; i++)
     {
-        enemies.push_back(new Goomba(750));
-        enemies.push_back(new Koopa(850));
-        enemies.push_back(new RedKoopa(950));
-        enemies.push_back(new BlueKoopa(1050));
-        enemies.push_back(new YellowKoopa(1000));
-        enemies.push_back(new BlackKoopa(720));
+        //enemies.push_back(new Goomba(750));
+        //enemies.push_back(new Koopa(850));
+        //enemies.push_back(new RedKoopa(950));
+        //enemies.push_back(new BlueKoopa(1050));
+        //enemies.push_back(new YellowKoopa(1000));
+        //enemies.push_back(new BlackKoopa(720));
+        enemies.push_back(new Spiny(750));
     }
 
 }
@@ -146,10 +157,18 @@ bool Game::collided()
            mario.getPosition().y + mario.getHeight() >= (*it)->getPosition().y-10 &&
            mario.getSpeed() > 0 )
         {
-            delete (*it);
-            enemies.erase(it);
-            mario.zeroSpeed();
-            mario.jump();
+            if((*it)->isThorned()) return true;
+            else
+            {
+                (*it)->decrementHealth();
+                if((*it)->getHealth() == 0)
+                {
+                    delete (*it);
+                    enemies.erase(it);
+                }
+                mario.zeroSpeed();
+                mario.jump();
+            }
         }
 
     }
@@ -196,13 +215,13 @@ void Game::drawMario()
         gout << stamp(marioRunRightTexture,mario.getPosition().x,mario.getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 >= 5)
         gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getSpeed() != 0 && !mario.getMovingLeft())
+    else if(mario.getSpeed() != 0 && !mario.isMovingLeft())
         gout << stamp(marioJumpRightTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getSpeed() != 0 && mario.getMovingLeft())
+    else if(mario.getSpeed() != 0 && mario.isMovingLeft())
         gout << stamp(marioJumpLeftTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getMovingLeft())
+    else if(mario.isMovingLeft())
         gout << stamp(marioLeftTexture,mario.getPosition().x,mario.getPosition().y);
-    else if(!mario.getMovingLeft())
+    else if(!mario.isMovingLeft())
         gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
 }
 
@@ -213,7 +232,7 @@ void Game::drawLevel()
     {
         if(it->getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
         else if(it->getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getType() == "end") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getType() == "end") gout << stamp(endTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
 
         offset += 50;
     }
@@ -230,54 +249,64 @@ void Game::drawEnemies()
             gout << stamp(goombaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
 
         //////////////////KOOPA//////////////////
-        else if(it->getType() == "koopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "koopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(koopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "koopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(koopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "koopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(koopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "koopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(koopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
 
         //////////////////RED KOOPA//////////////////
-        else if(it->getType() == "redkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "redkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(redKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "redkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(redKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "redkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(redKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "redkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(redKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
 
         //////////////////BLUE KOOPA//////////////////
-        else if(it->getType() == "bluekoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "bluekoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(blueKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "bluekoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(blueKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "bluekoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(blueKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "bluekoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(blueKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
 
         //////////////////YELLOW KOOPA//////////////////
-        else if(it->getType() == "yellowkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "yellowkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(yellowKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "yellowkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(yellowKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "yellowkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(yellowKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "yellowkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(yellowKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
 
         //////////////////BLACK KOOPA//////////////////
-        else if(it->getType() == "blackkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "blackkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(blackKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "blackkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(blackKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 < 5)
+        else if(it->getType() == "blackkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
             gout << stamp(blackKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && !it->getMovingLeft() && (ev.time / 30) % 10 >= 5)
+        else if(it->getType() == "blackkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
             gout << stamp(blackKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+
+        //////////////////SPINY//////////////////
+        else if(it->getType() == "spiny" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(spinyLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "spiny" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(spinyLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "spiny" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
+            gout << stamp(spinyRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        else if(it->getType() == "spiny" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
+            gout << stamp(spinyRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
     }
 }
 
@@ -393,6 +422,37 @@ void Game::readPipeTexture()
                 pipeTexture << move_to(j,i);
                 pipeTexture << color(r,g,b);
                 pipeTexture << dot;
+            }
+        }
+    }
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readEndTexture()
+{
+    f.open("pics/end.kep");
+    //canvas C;
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        endTexture.open(w,h);
+        endTexture.transparent(true);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                endTexture << move_to(j,i);
+                endTexture << color(r,g,b);
+                endTexture << dot;
             }
         }
     }
@@ -948,3 +1008,80 @@ void Game::readBlackKoopaMoveTexture()
     //groundTexture = C;
 }
 
+void Game::readSpinyTexture()
+{
+    f.open("pics/spiny.kep");
+    //canvas C;
+
+    spinyLeftTexture.transparent(true);
+    spinyRightTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        spinyLeftTexture.open(w,h);
+        spinyRightTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                spinyLeftTexture << move_to(j,i);
+                spinyLeftTexture << color(r,g,b);
+                spinyLeftTexture << dot;
+
+                spinyRightTexture << move_to(w-j,i);
+                spinyRightTexture << color(r,g,b);
+                spinyRightTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readSpinyMoveTexture()
+{
+    f.open("pics/spinyMove.kep");
+    //canvas C;
+
+    spinyLeftMoveTexture.transparent(true);
+    spinyRightMoveTexture.transparent(true);
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        spinyLeftMoveTexture.open(w,h);
+        spinyRightMoveTexture.open(w,h);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                spinyLeftMoveTexture << move_to(j,i);
+                spinyLeftMoveTexture << color(r,g,b);
+                spinyLeftMoveTexture << dot;
+
+                spinyRightMoveTexture << move_to(w-j,i);
+                spinyRightMoveTexture << color(r,g,b);
+                spinyRightMoveTexture << dot;
+            }
+        }
+    }
+
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
