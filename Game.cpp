@@ -5,30 +5,45 @@ Game::Game() :
     WINDOW_WIDTH(1000)
 {
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
+    tt = {  "background",
+            "ground",
+            "cliff",
+            "pipe",
+            "pipehelper",
+            "end",
+            "endhelper",
+            "stair"};
+    et = {  "goomba",
+            "koopa",
+            "redkoopa",
+            "bluekoopa",
+            "yellowkoopa",
+            "blackkoopa",
+            "spiny"};
 
-    readBackgroundTexture();
-    readGroundTexture();
-    readPipeTexture();
-    readEndTexture();
-    readStairTexture();
+    for(std::string s : tt)
+        terrainTextureMap[s] = canvas();
 
-    readMarioTexture();
-    readMarioJumpTexture();
-    readMarioRunTexture();
+    std::vector<canvas> c;
+    c.push_back(canvas());
+    c.push_back(canvas());
+    c.push_back(canvas());
+    c.push_back(canvas());
+    for(std::string s : et)
+    {
+        enemyTextureMap[s] = c;
+    }
 
-    readGoombaTexture();
-    readKoopaTexture();
-    readKoopaMoveTexture();
-    readRedKoopaTexture();
-    readRedKoopaMoveTexture();
-    readBlueKoopaTexture();
-    readBlueKoopaMoveTexture();
-    readYellowKoopaTexture();
-    readYellowKoopaMoveTexture();
-    readBlackKoopaTexture();
-    readBlackKoopaMoveTexture();
-    readSpinyTexture();
-    readSpinyMoveTexture();
+
+    for(std::map<std::string,canvas>::iterator t = terrainTextureMap.begin(); t != terrainTextureMap.end(); t++)
+        readTexture(t->first,t->second);
+    for(std::map<std::string,std::vector<canvas> >::iterator e = enemyTextureMap.begin(); e != enemyTextureMap.end(); e++)
+        readTexture(e->first,e->second.at(0),e->second.at(1),e->second.at(2),e->second.at(3));
+
+    readTexture("mario",marioLeftTexture,marioRightTexture);
+    readTexture("jump",marioJumpLeftTexture,marioJumpRightTexture);
+    readTexture("run",marioRunLeftTexture,marioRunRightTexture);
+
 }
 
 bool Game::newGame()
@@ -104,15 +119,16 @@ void Game::generateLevel()
     enemies.clear();
 
     srand(time(NULL));
+
     level.push_back(new Ground());
     level.push_back(new End());
     level.push_back(new EndHelper());
+
     for(int i = 0; i < 20; ++i)
     {
         level.push_back(new Ground());
-        level.push_back(new Stair());
     }
-    /*for(int i = 0; i < 50; ++i)
+    for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0)
         {
@@ -126,19 +142,24 @@ void Game::generateLevel()
             level.push_back(new Cliff());
         }
         else level.push_back(new Ground());
-    }*/
+    }
+
     level.push_back(new End());
     level.push_back(new Ground());
 
-    for(int i=0; i < 1; i++)
+    for(int i=0; i < 10; i++)
     {
-        //enemies.push_back(new Goomba(750));
-        //enemies.push_back(new Koopa(850));
-        //enemies.push_back(new RedKoopa(950));
-        //enemies.push_back(new BlueKoopa(1050));
-        //enemies.push_back(new YellowKoopa(1000));
-        //enemies.push_back(new BlackKoopa(720));
-        //enemies.push_back(new Spiny(750));
+        int r = rand() % 7;
+        int pos = (rand() % ((level.size()*50)-700)) + 700;
+        switch(r){
+            case 0: enemies.push_back(new Goomba(pos)); break;
+            case 1: enemies.push_back(new Koopa(pos)); break;
+            case 3: enemies.push_back(new RedKoopa(pos)); break;
+            case 4: enemies.push_back(new BlueKoopa(pos)); break;
+            case 5: enemies.push_back(new YellowKoopa(pos)); break;
+            case 6: enemies.push_back(new BlackKoopa(pos)); break;
+            case 7: enemies.push_back(new Spiny(pos)); break;
+        }
     }
 
 }
@@ -200,7 +221,7 @@ void Game::draw()
 
 void Game::drawBackgound()
 {
-    gout    << stamp(backgroundTexture,0,0);
+    gout    << stamp(terrainTextureMap["background"],0,0);;
 }
 
 void Game::drawMario()
@@ -232,91 +253,44 @@ void Game::drawLevel()
     int offset = 500;
     for(Terrain *it : level)
     {
-        if(it->getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getType() == "end") gout << stamp(endTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-        else if(it->getType() == "stair") gout << stamp(stairTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
-
+        if(it->getType() != "pipehelper" &&
+           it->getType() != "endhelper"  &&
+           it->getType() != "cliff")
+                drawTerrain(it->getType(),it->getHeight(),offset);
         offset += 50;
     }
+}
+
+void Game::drawTerrain(std::string type, int height, int offset)
+{
+    gout << stamp(terrainTextureMap[type], offset-mario.getDistance(),WINDOW_HEIGHT-height);
 }
 
 void Game::drawEnemies()
 {
     for(Enemy* it : enemies)
     {
-        //////////////////GOOMBA//////////////////
-        if(it->getType() == "goomba" && (ev.time / 30) % 10 < 5)
-            gout << stamp(goombaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "goomba" && (ev.time / 30) % 10 >= 5)
-            gout << stamp(goombaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////KOOPA//////////////////
-        else if(it->getType() == "koopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(koopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(koopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(koopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "koopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(koopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////RED KOOPA//////////////////
-        else if(it->getType() == "redkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(redKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(redKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(redKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "redkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(redKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////BLUE KOOPA//////////////////
-        else if(it->getType() == "bluekoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(blueKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(blueKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(blueKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "bluekoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(blueKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////YELLOW KOOPA//////////////////
-        else if(it->getType() == "yellowkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(yellowKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(yellowKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(yellowKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "yellowkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(yellowKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////BLACK KOOPA//////////////////
-        else if(it->getType() == "blackkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(blackKoopaLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(blackKoopaLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(blackKoopaRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "blackkoopa" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(blackKoopaRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-
-        //////////////////SPINY//////////////////
-        else if(it->getType() == "spiny" && it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(spinyLeftTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "spiny" && it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(spinyLeftMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "spiny" && !it->isMovingLeft() && (ev.time / 30) % 10 < 5)
-            gout << stamp(spinyRightTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
-        else if(it->getType() == "spiny" && !it->isMovingLeft() && (ev.time / 30) % 10 >= 5)
-            gout << stamp(spinyRightMoveTexture,500+it->getDistance()-mario.getDistance(),it->getPosition().y);
+        drawEnemy(it->getType(), it->getDistance(), it->getPosition().y, it->isMovingLeft(), (ev.time / 30) % 10 < 5);
     }
 }
 
-canvas Game::readTexture(std::string filename)
+void Game::drawEnemy(std::string type, int distance, int y, bool isMovingLeft, bool timer)
 {
+    if(!isMovingLeft && timer)
+            gout << stamp(enemyTextureMap[type].at(0), 500 + distance - mario.getDistance(), y);
+    else if(isMovingLeft && timer)
+            gout << stamp(enemyTextureMap[type].at(1), 500 + distance - mario.getDistance(), y);
+    else if(!isMovingLeft && !timer)
+            gout << stamp(enemyTextureMap[type].at(2), 500 + distance - mario.getDistance(), y);
+    else if(isMovingLeft && !timer)
+            gout << stamp(enemyTextureMap[type].at(3), 500 + distance - mario.getDistance(), y);
+}
+
+void Game::readTexture(std::string filename, canvas& texture)
+{
+    filename = "pics/" + filename + ".kep";
+    LOG("reading file: " << filename);
     f.open(filename);
-    canvas C;
 
     if(f.is_open())
     {
@@ -324,29 +298,34 @@ canvas Game::readTexture(std::string filename)
         f >> w;
         f >> h;
 
-        C.open(w,h);
+        texture.open(w,h);
+        texture.transparent(true);
 
         for(int i = 0; i < h; ++i)
         {
             for(int j = 0; j < w; ++j)
             {
                 f >> r >> g >> b;
-                C << move_to(j,i);
-                C << color(r,g,b);
-                C << dot;
+                texture << move_to(j,i);
+                texture << color(r,g,b);
+                texture << dot;
             }
         }
+        LOG(filename << " read successfully");
     }
-    else LOG("########## File could not be opened! ##########");
+    else LOG("########## File " << filename << " could not be opened! ##########");
 
     f.close();
-    return C;
 }
 
-void Game::readBackgroundTexture()
+void Game::readTexture(std::string filename, canvas& leftTexture, canvas& rightTexture)
 {
-    f.open("pics/background.kep");
-    //canvas C;
+    filename = "pics/" + filename + ".kep";
+    LOG("reading file: " << filename);
+    f.open(filename);
+
+    rightTexture.transparent(true);
+    leftTexture.transparent(true);
 
     if(f.is_open())
     {
@@ -354,768 +333,33 @@ void Game::readBackgroundTexture()
         f >> w;
         f >> h;
 
-        backgroundTexture.open(w,h);
+        rightTexture.open(w,h);
+        leftTexture.open(w,h);
 
         for(int i = 0; i < h; ++i)
         {
             for(int j = 0; j < w; ++j)
             {
                 f >> r >> g >> b;
-                backgroundTexture << move_to(j,i);
-                backgroundTexture << color(r,g,b);
-                backgroundTexture << dot;
+                rightTexture << move_to(j,i);
+                rightTexture << color(r,g,b);
+                rightTexture << dot;
+
+                leftTexture << move_to(w-j,i);
+                leftTexture << color(r,g,b);
+                leftTexture << dot;
             }
         }
+        LOG(filename << " read successfully");
     }
-    else LOG("########## File could not be opened! ##########");
+
+    else LOG("########## File " << filename << " could not be opened! ##########");
 
     f.close();
-    //backgroundTexture = C;
 }
 
-void Game::readGroundTexture()
+void Game::readTexture(std::string filename, canvas& leftTexture, canvas& rightTexture, canvas& leftMoveTexture, canvas& rightMoveTexture)
 {
-    f.open("pics/ground.kep");
-    //canvas C;
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        groundTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                groundTexture << move_to(j,i);
-                groundTexture << color(r,g,b);
-                groundTexture << dot;
-            }
-        }
-    }
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readPipeTexture()
-{
-    f.open("pics/pipe.kep");
-    //canvas C;
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        pipeTexture.open(w,h);
-        pipeTexture.transparent(true);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                pipeTexture << move_to(j,i);
-                pipeTexture << color(r,g,b);
-                pipeTexture << dot;
-            }
-        }
-    }
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readEndTexture()
-{
-    f.open("pics/end.kep");
-    //canvas C;
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        endTexture.open(w,h);
-        endTexture.transparent(true);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                endTexture << move_to(j,i);
-                endTexture << color(r,g,b);
-                endTexture << dot;
-            }
-        }
-    }
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readStairTexture()
-{
-    f.open("pics/stair.kep");
-    //canvas C;
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        stairTexture.open(w,h);
-        stairTexture.transparent(true);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                stairTexture << move_to(j,i);
-                stairTexture << color(r,g,b);
-                stairTexture << dot;
-            }
-        }
-    }
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readMarioTexture()
-{
-    f.open("pics/mario.kep");
-    //canvas C;
-
-    marioRightTexture.transparent(true);
-    marioLeftTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        marioRightTexture.open(w,h);
-        marioLeftTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                marioRightTexture << move_to(j,i);
-                marioRightTexture << color(r,g,b);
-                marioRightTexture << dot;
-
-                marioLeftTexture << move_to(w-j,i);
-                marioLeftTexture << color(r,g,b);
-                marioLeftTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readMarioJumpTexture()
-{
-    f.open("pics/jump.kep");
-    //canvas C;
-
-    marioJumpRightTexture.transparent(true);
-    marioJumpLeftTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        marioJumpRightTexture.open(w,h);
-        marioJumpLeftTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                marioJumpRightTexture << move_to(j,i);
-                marioJumpRightTexture << color(r,g,b);
-                marioJumpRightTexture << dot;
-
-                marioJumpLeftTexture << move_to(w-j,i);
-                marioJumpLeftTexture << color(r,g,b);
-                marioJumpLeftTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readMarioRunTexture()
-{
-    f.open("pics/run.kep");
-    //canvas C;
-
-    marioRunRightTexture.transparent(true);
-    marioRunLeftTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        marioRunRightTexture.open(w,h);
-        marioRunLeftTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                marioRunRightTexture << move_to(j,i);
-                marioRunRightTexture << color(r,g,b);
-                marioRunRightTexture << dot;
-
-                marioRunLeftTexture << move_to(w-j,i);
-                marioRunLeftTexture << color(r,g,b);
-                marioRunLeftTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readGoombaTexture()
-{
-    f.open("pics/goomba.kep");
-    //canvas C;
-
-    goombaLeftTexture.transparent(true);
-    goombaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        goombaLeftTexture.open(w,h);
-        goombaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                goombaLeftTexture << move_to(j,i);
-                goombaLeftTexture << color(r,g,b);
-                goombaLeftTexture << dot;
-
-                goombaRightTexture << move_to(w-j,i);
-                goombaRightTexture << color(r,g,b);
-                goombaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readKoopaTexture()
-{
-    f.open("pics/koopaStand.kep");
-    //canvas C;
-
-    koopaLeftTexture.transparent(true);
-    koopaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        koopaLeftTexture.open(w,h);
-        koopaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                koopaLeftTexture << move_to(j,i);
-                koopaLeftTexture << color(r,g,b);
-                koopaLeftTexture << dot;
-
-                koopaRightTexture << move_to(w-j,i);
-                koopaRightTexture << color(r,g,b);
-                koopaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readKoopaMoveTexture()
-{
-    f.open("pics/koopaMove.kep");
-    //canvas C;
-
-    koopaLeftMoveTexture.transparent(true);
-    koopaRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        koopaLeftMoveTexture.open(w,h);
-        koopaRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                koopaLeftMoveTexture << move_to(j,i);
-                koopaLeftMoveTexture << color(r,g,b);
-                koopaLeftMoveTexture << dot;
-
-                koopaRightMoveTexture << move_to(w-j,i);
-                koopaRightMoveTexture << color(r,g,b);
-                koopaRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readRedKoopaTexture()
-{
-    f.open("pics/redKoopaStand.kep");
-    //canvas C;
-
-    redKoopaLeftTexture.transparent(true);
-    redKoopaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        redKoopaLeftTexture.open(w,h);
-        redKoopaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                redKoopaLeftTexture << move_to(j,i);
-                redKoopaLeftTexture << color(r,g,b);
-                redKoopaLeftTexture << dot;
-
-                redKoopaRightTexture << move_to(w-j,i);
-                redKoopaRightTexture << color(r,g,b);
-                redKoopaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readRedKoopaMoveTexture()
-{
-    f.open("pics/redKoopaMove.kep");
-    //canvas C;
-
-    redKoopaLeftMoveTexture.transparent(true);
-    redKoopaRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        redKoopaLeftMoveTexture.open(w,h);
-        redKoopaRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                redKoopaLeftMoveTexture << move_to(j,i);
-                redKoopaLeftMoveTexture << color(r,g,b);
-                redKoopaLeftMoveTexture << dot;
-
-                redKoopaRightMoveTexture << move_to(w-j,i);
-                redKoopaRightMoveTexture << color(r,g,b);
-                redKoopaRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readBlueKoopaTexture()
-{
-    f.open("pics/blueKoopaStand.kep");
-    //canvas C;
-
-    blueKoopaLeftTexture.transparent(true);
-    blueKoopaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        blueKoopaLeftTexture.open(w,h);
-        blueKoopaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                blueKoopaLeftTexture << move_to(j,i);
-                blueKoopaLeftTexture << color(r,g,b);
-                blueKoopaLeftTexture << dot;
-
-                blueKoopaRightTexture << move_to(w-j,i);
-                blueKoopaRightTexture << color(r,g,b);
-                blueKoopaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readBlueKoopaMoveTexture()
-{
-    f.open("pics/blueKoopaMove.kep");
-    //canvas C;
-
-    blueKoopaLeftMoveTexture.transparent(true);
-    blueKoopaRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        blueKoopaLeftMoveTexture.open(w,h);
-        blueKoopaRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                blueKoopaLeftMoveTexture << move_to(j,i);
-                blueKoopaLeftMoveTexture << color(r,g,b);
-                blueKoopaLeftMoveTexture << dot;
-
-                blueKoopaRightMoveTexture << move_to(w-j,i);
-                blueKoopaRightMoveTexture << color(r,g,b);
-                blueKoopaRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readYellowKoopaTexture()
-{
-    f.open("pics/yellowKoopaStand.kep");
-    //canvas C;
-
-    yellowKoopaLeftTexture.transparent(true);
-    yellowKoopaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        yellowKoopaLeftTexture.open(w,h);
-        yellowKoopaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                yellowKoopaLeftTexture << move_to(j,i);
-                yellowKoopaLeftTexture << color(r,g,b);
-                yellowKoopaLeftTexture << dot;
-
-                yellowKoopaRightTexture << move_to(w-j,i);
-                yellowKoopaRightTexture << color(r,g,b);
-                yellowKoopaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readYellowKoopaMoveTexture()
-{
-    f.open("pics/yellowKoopaMove.kep");
-    //canvas C;
-
-    yellowKoopaLeftMoveTexture.transparent(true);
-    yellowKoopaRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        yellowKoopaLeftMoveTexture.open(w,h);
-        yellowKoopaRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                yellowKoopaLeftMoveTexture << move_to(j,i);
-                yellowKoopaLeftMoveTexture << color(r,g,b);
-                yellowKoopaLeftMoveTexture << dot;
-
-                yellowKoopaRightMoveTexture << move_to(w-j,i);
-                yellowKoopaRightMoveTexture << color(r,g,b);
-                yellowKoopaRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readBlackKoopaTexture()
-{
-    f.open("pics/blackKoopaStand.kep");
-    //canvas C;
-
-    blackKoopaLeftTexture.transparent(true);
-    blackKoopaRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        blackKoopaLeftTexture.open(w,h);
-        blackKoopaRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                blackKoopaLeftTexture << move_to(j,i);
-                blackKoopaLeftTexture << color(r,g,b);
-                blackKoopaLeftTexture << dot;
-
-                blackKoopaRightTexture << move_to(w-j,i);
-                blackKoopaRightTexture << color(r,g,b);
-                blackKoopaRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readBlackKoopaMoveTexture()
-{
-    f.open("pics/blackKoopaMove.kep");
-    //canvas C;
-
-    blackKoopaLeftMoveTexture.transparent(true);
-    blackKoopaRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        blackKoopaLeftMoveTexture.open(w,h);
-        blackKoopaRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                blackKoopaLeftMoveTexture << move_to(j,i);
-                blackKoopaLeftMoveTexture << color(r,g,b);
-                blackKoopaLeftMoveTexture << dot;
-
-                blackKoopaRightMoveTexture << move_to(w-j,i);
-                blackKoopaRightMoveTexture << color(r,g,b);
-                blackKoopaRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readSpinyTexture()
-{
-    f.open("pics/spiny.kep");
-    //canvas C;
-
-    spinyLeftTexture.transparent(true);
-    spinyRightTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        spinyLeftTexture.open(w,h);
-        spinyRightTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                spinyLeftTexture << move_to(j,i);
-                spinyLeftTexture << color(r,g,b);
-                spinyLeftTexture << dot;
-
-                spinyRightTexture << move_to(w-j,i);
-                spinyRightTexture << color(r,g,b);
-                spinyRightTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
-}
-
-void Game::readSpinyMoveTexture()
-{
-    f.open("pics/spinyMove.kep");
-    //canvas C;
-
-    spinyLeftMoveTexture.transparent(true);
-    spinyRightMoveTexture.transparent(true);
-
-    if(f.is_open())
-    {
-        int w,h,r,g,b = 0;
-        f >> w;
-        f >> h;
-
-        spinyLeftMoveTexture.open(w,h);
-        spinyRightMoveTexture.open(w,h);
-
-        for(int i = 0; i < h; ++i)
-        {
-            for(int j = 0; j < w; ++j)
-            {
-                f >> r >> g >> b;
-                spinyLeftMoveTexture << move_to(j,i);
-                spinyLeftMoveTexture << color(r,g,b);
-                spinyLeftMoveTexture << dot;
-
-                spinyRightMoveTexture << move_to(w-j,i);
-                spinyRightMoveTexture << color(r,g,b);
-                spinyRightMoveTexture << dot;
-            }
-        }
-    }
-
-    else LOG("########## File could not be opened! ##########");
-
-    f.close();
-    //groundTexture = C;
+    readTexture(filename, leftTexture, rightTexture);
+    readTexture(filename + "move", leftMoveTexture, rightMoveTexture);
 }

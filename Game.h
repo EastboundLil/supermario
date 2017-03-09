@@ -6,6 +6,7 @@
 #include "fstream"
 #include <vector>
 #include <list>
+#include <map>
 #include <cstdlib>
 #include <time.h>
 #include "Mario.h"
@@ -33,46 +34,30 @@ private:
     void drawLevel();
     void drawEnemies();
 
-    void readBackgroundTexture();
-    void readGroundTexture();
-    void readPipeTexture();
-    void readEndTexture();
-    void readStairTexture();
+    void drawTerrain(std::string type, int height, int offset);
+    void drawEnemy(std::string type, int distance, int y, bool isMovingLeft, bool timer);
 
-    void readMarioTexture();
-    void readMarioJumpTexture();
-    void readMarioRunTexture();
-
-    void readGoombaTexture();
-    void readKoopaTexture();
-    void readKoopaMoveTexture();
-    void readRedKoopaTexture();
-    void readRedKoopaMoveTexture();
-    void readBlueKoopaTexture();
-    void readBlueKoopaMoveTexture();
-    void readYellowKoopaTexture();
-    void readYellowKoopaMoveTexture();
-    void readBlackKoopaTexture();
-    void readBlackKoopaMoveTexture();
-    void readSpinyTexture();
-    void readSpinyMoveTexture();
-    canvas readTexture(std::string filename);
-
-    std::vector<Terrain*> getLevel();
+    void readTexture(std::string filename, canvas& texture);
+    void readTexture(std::string filename,  canvas& left,
+                                            canvas& right);
+    void readTexture(std::string filename,  canvas& leftTexture,
+                                            canvas& rightTexture,
+                                            canvas& leftMoveTexture,
+                                            canvas& rightMoveTexture);
 
     const int WINDOW_HEIGHT;
     const int WINDOW_WIDTH;
 
     std::vector<Terrain*> level;
     std::list<Enemy*> enemies;
+    std::map<std::string, canvas> terrainTextureMap;
+    std::map<std::string, std::vector<canvas> > enemyTextureMap;
+
+    std::vector<std::string> tt;
+    std::vector<std::string> et;
 
     event ev;
     Mario mario;
-    canvas backgroundTexture;
-    canvas groundTexture;
-    canvas pipeTexture;
-    canvas endTexture;
-    canvas stairTexture;
 
     canvas marioRightTexture;
     canvas marioLeftTexture;
@@ -80,34 +65,6 @@ private:
     canvas marioJumpLeftTexture;
     canvas marioRunRightTexture;
     canvas marioRunLeftTexture;
-
-    canvas goombaLeftTexture;
-    canvas goombaRightTexture;
-    canvas koopaLeftTexture;
-    canvas koopaRightTexture;
-    canvas koopaLeftMoveTexture;
-    canvas koopaRightMoveTexture;
-    canvas redKoopaLeftTexture;
-    canvas redKoopaRightTexture;
-    canvas redKoopaLeftMoveTexture;
-    canvas redKoopaRightMoveTexture;
-    canvas blueKoopaLeftTexture;
-    canvas blueKoopaRightTexture;
-    canvas blueKoopaLeftMoveTexture;
-    canvas blueKoopaRightMoveTexture;
-    canvas yellowKoopaLeftTexture;
-    canvas yellowKoopaRightTexture;
-    canvas yellowKoopaLeftMoveTexture;
-    canvas yellowKoopaRightMoveTexture;
-    canvas blackKoopaLeftTexture;
-    canvas blackKoopaRightTexture;
-    canvas blackKoopaLeftMoveTexture;
-    canvas blackKoopaRightMoveTexture;
-    canvas spinyLeftTexture;
-    canvas spinyLeftMoveTexture;
-    canvas spinyRightTexture;
-    canvas spinyRightMoveTexture;
-
 
     std::fstream f;
 

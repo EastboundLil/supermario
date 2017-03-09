@@ -3,6 +3,16 @@
 
 #include "Enemy.h"
 
+struct EnemyTexture
+{
+    EnemyTexture(std::string type) : type(type) {}
+    std::string type;
+    canvas left;
+    canvas right;
+    canvas leftMove;
+    canvas rightMove;
+};
+
 class Goomba : public Enemy
 {
 public:
