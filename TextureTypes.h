@@ -46,6 +46,28 @@ public:
     Stair() : Terrain(Position(), "stair", 100) {}
 };
 
+class Stair2 : public Terrain
+{
+public:
+    Stair2() : Terrain(Position(), "stair2", 150) {}
+};
 
+class Stair3 : public Terrain
+{
+public:
+    Stair3() : Terrain(Position(), "stair3", 200) {}
+};
+
+class Stair4 : public Terrain
+{
+public:
+    Stair4() : Terrain(Position(), "stair4", 250) {}
+};
+
+class Stair5 : public Terrain
+{
+public:
+    Stair5() : Terrain(Position(), "stair5", 300) {}
+};
 
 #endif // TEXTURETYPES_H

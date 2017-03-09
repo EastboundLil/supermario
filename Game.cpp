@@ -12,7 +12,12 @@ Game::Game() :
             "pipehelper",
             "end",
             "endhelper",
-            "stair"};
+            "stair",
+            "stair2",
+            "stair3",
+            "stair4",
+            "stair5"};
+
     et = {  "goomba",
             "koopa",
             "redkoopa",
@@ -29,6 +34,7 @@ Game::Game() :
     c.push_back(canvas());
     c.push_back(canvas());
     c.push_back(canvas());
+
     for(std::string s : et)
     {
         enemyTextureMap[s] = c;
@@ -96,7 +102,6 @@ bool Game::newGame()
                 mario.jump();
             }
         }
-
         draw();
     }
 
@@ -128,6 +133,13 @@ void Game::generateLevel()
     {
         level.push_back(new Ground());
     }
+
+    level.push_back(new Stair());
+    level.push_back(new Stair2());
+    level.push_back(new Stair3());
+    level.push_back(new Stair4());
+    level.push_back(new Stair5());
+
     for(int i = 0; i < 50; ++i)
     {
         if((i+1) % 10 == 0)
