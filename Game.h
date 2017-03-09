@@ -37,6 +37,7 @@ private:
     void readGroundTexture();
     void readPipeTexture();
     void readEndTexture();
+    void readStairTexture();
 
     void readMarioTexture();
     void readMarioJumpTexture();
@@ -71,6 +72,7 @@ private:
     canvas groundTexture;
     canvas pipeTexture;
     canvas endTexture;
+    canvas stairTexture;
 
     canvas marioRightTexture;
     canvas marioLeftTexture;

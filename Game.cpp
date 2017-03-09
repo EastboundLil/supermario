@@ -10,6 +10,7 @@ Game::Game() :
     readGroundTexture();
     readPipeTexture();
     readEndTexture();
+    readStairTexture();
 
     readMarioTexture();
     readMarioJumpTexture();
@@ -109,6 +110,7 @@ void Game::generateLevel()
     for(int i = 0; i < 20; ++i)
     {
         level.push_back(new Ground());
+        level.push_back(new Stair());
     }
     /*for(int i = 0; i < 50; ++i)
     {
@@ -136,7 +138,7 @@ void Game::generateLevel()
         //enemies.push_back(new BlueKoopa(1050));
         //enemies.push_back(new YellowKoopa(1000));
         //enemies.push_back(new BlackKoopa(720));
-        enemies.push_back(new Spiny(750));
+        //enemies.push_back(new Spiny(750));
     }
 
 }
@@ -233,6 +235,7 @@ void Game::drawLevel()
         if(it->getType() == "ground") gout << stamp(groundTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
         else if(it->getType() == "pipe") gout << stamp(pipeTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
         else if(it->getType() == "end") gout << stamp(endTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
+        else if(it->getType() == "stair") gout << stamp(stairTexture, offset-mario.getDistance(),WINDOW_HEIGHT-it->getHeight());
 
         offset += 50;
     }
@@ -453,6 +456,37 @@ void Game::readEndTexture()
                 endTexture << move_to(j,i);
                 endTexture << color(r,g,b);
                 endTexture << dot;
+            }
+        }
+    }
+    else LOG("########## File could not be opened! ##########");
+
+    f.close();
+    //groundTexture = C;
+}
+
+void Game::readStairTexture()
+{
+    f.open("pics/stair.kep");
+    //canvas C;
+
+    if(f.is_open())
+    {
+        int w,h,r,g,b = 0;
+        f >> w;
+        f >> h;
+
+        stairTexture.open(w,h);
+        stairTexture.transparent(true);
+
+        for(int i = 0; i < h; ++i)
+        {
+            for(int j = 0; j < w; ++j)
+            {
+                f >> r >> g >> b;
+                stairTexture << move_to(j,i);
+                stairTexture << color(r,g,b);
+                stairTexture << dot;
             }
         }
     }

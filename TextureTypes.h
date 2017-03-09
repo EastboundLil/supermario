@@ -39,6 +39,12 @@ public:
     Cliff() : Terrain(Position(), "cliff", -100) {}
 };
 
+class Stair : public Terrain
+{
+public:
+    Stair() : Terrain(Position(), "stair", 100) {}
+};
+
 
 
 #endif // TEXTURETYPES_H
