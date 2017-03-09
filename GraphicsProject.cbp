@@ -43,25 +43,23 @@
 			<Add directory="lib" />
 		</Linker>
 		<Unit filename="Color.h" />
+		<Unit filename="Enemy.h" />
+		<Unit filename="EnemyTypes.h" />
 		<Unit filename="Game.cpp" />
 		<Unit filename="Game.h">
 			<Option target="Debug" />
 		</Unit>
-		<Unit filename="Ground.cpp" />
-		<Unit filename="Ground.h" />
 		<Unit filename="Logger.h" />
 		<Unit filename="Mario.cpp" />
 		<Unit filename="Mario.h">
 			<Option target="Debug" />
 		</Unit>
-		<Unit filename="Pipe.cpp" />
-		<Unit filename="Pipe.h" />
 		<Unit filename="Position.h">
 			<Option target="Debug" />
 		</Unit>
 		<Unit filename="Terrain.cpp" />
 		<Unit filename="Terrain.h" />
-		<Unit filename="Widget.h" />
+		<Unit filename="TextureTypes.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

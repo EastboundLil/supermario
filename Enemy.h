@@ -11,36 +11,45 @@ public:
         distance(distance),
         horizontalSpeed(horizontalSpeed),
         acceleration(1),
-        speed(0)
+        speed(0),
+        movingLeft(true)
     {
 
     }
 
-    void moveRight(int next)
+    virtual void move(int prev, int next)
+    {
+        if(movingLeft) moveLeft(prev);
+        else moveRight(next);
+    }
+
+    virtual void moveRight(int next)
     {
         if(next >= position.y + height)
         {
             distance += horizontalSpeed;
             position.x += horizontalSpeed;
         }
+        else changeDirection();
     }
 
-    void moveLeft(int prev)
+   virtual void moveLeft(int prev)
     {
         if(prev >= position.y + height)
         {
             distance -= horizontalSpeed;
             position.x -= horizontalSpeed;
         }
+        else changeDirection();
     }
 
-    void jump()
+    virtual void jump()
     {
         if(speed == 0) speed = -20;
         position.y--;
     }
 
-    void fall(int groundLevel)
+    virtual void fall(int groundLevel)
     {
         groundLevel -= height;
         if(position.y < groundLevel)
@@ -57,12 +66,17 @@ public:
 
     int getDistance() {return distance;}
     int getSpeed() {return speed;}
+    bool changeDirection() {movingLeft = !movingLeft;}
+    bool getMovingLeft() {return movingLeft;}
+
+    void zeroSpeed() {speed = 0;}
 
 protected:
     int distance;
     int acceleration;
     int speed;
     int horizontalSpeed;
+    bool movingLeft;
 };
 
 #endif // ENEMY_H

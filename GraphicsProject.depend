@@ -62,16 +62,20 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1488974936 source:c:\git_repo\beadando\game.cpp
+1489046805 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
-1488961548 c:\git_repo\beadando\game.h
+1489046653 c:\git_repo\beadando\game.h
 	"graphics.hpp"
 	"Logger.h"
 	"fstream"
 	<vector>
+	<list>
+	<cstdlib>
+	<time.h>
 	"Mario.h"
 	"TextureTypes.h"
+	"EnemyTypes.h"
 
 1488878509 c:\git_repo\beadando\include\graphics.hpp
 	<string>
@@ -84,7 +88,7 @@
 	"Mario.h"
 	"Ground.h"
 
-1488963266 c:\git_repo\beadando\mario.h
+1489041614 c:\git_repo\beadando\mario.h
 	"Position.h"
 	"Enemy.h"
 	"graphics.hpp"
@@ -115,7 +119,7 @@
 1487324575 source:c:\git_repo\beadando\main.cpp
 	"Game.h"
 
-1488963657 source:c:\git_repo\beadando\mario.cpp
+1489045439 source:c:\git_repo\beadando\mario.cpp
 	"Mario.h"
 
 1488958131 source:c:\git_repo\beadando\terrain.cpp
@@ -132,6 +136,9 @@
 1488975300 c:\git_repo\beadando\texturetypes.h
 	"Terrain.h"
 
-1488963537 c:\git_repo\beadando\enemy.h
+1489047386 c:\git_repo\beadando\enemy.h
 	"Terrain.h"
+
+1489046418 c:\git_repo\beadando\enemytypes.h
+	"Enemy.h"
 

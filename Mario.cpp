@@ -3,14 +3,13 @@
 Mario::Mario() :
     Enemy(Position(100,116), "mario", 64, 300, 5)
 {
-
+    movingLeft = false;
 }
 
 Mario::Mario(int x, int y) :
-    Enemy(Position(x,y), "mario", 64, 300, 5)
+    Enemy(Position(x,y), "mario", 64, 300,5)
 {
-    distance = 300;
-    horizontalSpeed = 5;
+    movingLeft = false;
 }
 
 void Mario::reset(int x, int y)
@@ -25,6 +24,7 @@ void Mario::moveRight(int next)
     {
         distance += horizontalSpeed;
     }
+    movingLeft = false;
 }
 
 void Mario::moveLeft(int prev)
@@ -33,28 +33,8 @@ void Mario::moveLeft(int prev)
     {
         distance -= horizontalSpeed;
     }
+    movingLeft = true;
 }
-
-/*void Mario::jump()
-{
-    if(speed == 0) speed = -20;
-    position.y--;
-}
-
-void Mario::fall(int groundLevel)
-{
-    groundLevel -= height;
-    if(position.y < groundLevel)
-    {
-        position.y += speed;
-        speed += acceleration;
-    }
-    if(position.y >= groundLevel)
-    {
-        speed = 0;
-        position.y = groundLevel;
-    }
-}*/
 
 
 
