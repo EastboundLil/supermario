@@ -37,7 +37,7 @@ public:
 class Cliff : public Terrain
 {
 public:
-    Cliff() : Terrain(Position(), "cliff", -100) {}
+    Cliff() : Terrain(Position(), "cliff", -500) {}
 };
 
 class Stair : public Terrain

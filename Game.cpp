@@ -4,27 +4,14 @@ Game::Game() :
     WINDOW_HEIGHT(600),
     WINDOW_WIDTH(1000)
 {
+    srand(time(NULL));
+    gin.timer(1);
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
-    tt = {  "background",
-            "ground",
-            "cliff",
-            "pipe",
-            "pipehelper",
-            "end",
-            "endhelper",
-            "stair",
-            "stair2",
-            "stair3",
-            "stair4",
-            "stair5"};
+    tt = {"background","ground","cliff","pipe","pipehelper","end","endhelper","stair","stair2","stair3","stair4","stair5"};
+    et = {"goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
 
-    et = {  "goomba",
-            "koopa",
-            "redkoopa",
-            "bluekoopa",
-            "yellowkoopa",
-            "blackkoopa",
-            "spiny"};
+    numberOfTerrainTypes = tt.size();
+    numberOfEnemieTypes = et.size();
 
     for(std::string s : tt)
         terrainTextureMap[s] = canvas();
@@ -39,7 +26,6 @@ Game::Game() :
     {
         enemyTextureMap[s] = c;
     }
-
 
     for(std::map<std::string,canvas>::iterator t = terrainTextureMap.begin(); t != terrainTextureMap.end(); t++)
         readTexture(t->first,t->second);
@@ -57,7 +43,6 @@ bool Game::newGame()
     bool endLevel = false;
     mario.reset(WINDOW_WIDTH/2,0);
     generateLevel();
-    gin.timer(1);
     movingRight = false;
     movingLeft = false;
 
@@ -110,6 +95,12 @@ bool Game::newGame()
 
 void Game::generateLevel()
 {
+    generateTerrain();
+    generateEnemies();
+}
+
+void Game::generateTerrain()
+{
 
     for(Terrain* it : level)
     {
@@ -117,63 +108,128 @@ void Game::generateLevel()
     }
     level.clear();
 
+    level.push_back(new Ground());
+    level.push_back(new End());
+    level.push_back(new EndHelper());
+
+    for(int i = 0; i < 15; ++i)
+    {
+        level.push_back(new Ground());
+    }
+
+    for(int i = 0; i < 50; ++i)
+    {
+        addGround();
+
+        int r = rand() % numberOfTerrainTypes+1;
+        switch(r){
+            case 1: addPipe();      addGround(); break;
+            case 2: addCliff();     addGround(); break;
+            case 3: addStair();     addGround(); break;
+            case 4: addDownStair(); addGround(); break;
+        }
+    }
+
+    level.push_back(new End());
+    level.push_back(new Ground());
+
+}
+
+void Game::addGround()
+{
+    int r = rand() % 5;
+    for(int i = 0; i < r; i++)
+    {
+        level.push_back(new Ground());
+    }
+}
+
+void Game::addPipe()
+{
+    int r = rand() % 3;
+    for(int i = 1; i < r; i++)  level.push_back(new Ground());
+
+    level.push_back(new Pipe());
+    level.push_back(new PipeHelper());
+
+    r = rand() % 3;
+    for(int i = 0; i < r; i++)  level.push_back(new Ground());
+}
+
+void Game::addCliff()
+{
+    int r = rand() % 7;
+
+    if(r < 3)
+    {
+        level.push_back(new Cliff());
+        level.push_back(new Cliff());
+        level.push_back(new Cliff());
+    }
+    else
+    {
+        for(int i=0; i < r; i++)
+        {
+            level.push_back(new Cliff());
+            level.push_back(new Ground());
+        }
+    }
+}
+
+void Game::addStair()
+{
+    int r = rand() % 6;
+
+    std::vector<Terrain*> stairs;
+    stairs.push_back(new Stair());
+    stairs.push_back(new Stair2());
+    stairs.push_back(new Stair3());
+    stairs.push_back(new Stair4());
+    stairs.push_back(new Stair5());
+
+    for(int i = 0; i < r; i++)
+    {
+        level.push_back(stairs.at(i));
+    }
+}
+
+void Game::addDownStair()
+{
+    int r = rand() % 3;
+
+    std::vector<Terrain*> stairs;
+    stairs.push_back(new Stair());
+    stairs.push_back(new Stair2());
+    stairs.push_back(new Stair3());
+
+    for(int i = r; i >= 0; i--)
+    {
+        level.push_back(stairs.at(i));
+    }
+}
+
+void Game::generateEnemies()
+{
     for(Enemy* it : enemies)
     {
         delete it;
     }
     enemies.clear();
 
-    srand(time(NULL));
-
-    level.push_back(new Ground());
-    level.push_back(new End());
-    level.push_back(new EndHelper());
-
-    for(int i = 0; i < 20; ++i)
+    for(int i=0; i < 15; i++)
     {
-        level.push_back(new Ground());
-    }
-
-    level.push_back(new Stair());
-    level.push_back(new Stair2());
-    level.push_back(new Stair3());
-    level.push_back(new Stair4());
-    level.push_back(new Stair5());
-
-    for(int i = 0; i < 50; ++i)
-    {
-        if((i+1) % 10 == 0)
-        {
-            level.push_back(new Pipe());
-            level.push_back(new PipeHelper());
-        }
-        else if((i+1) % 7 == 0)
-        {
-            level.push_back(new Cliff());
-            level.push_back(new Cliff());
-            level.push_back(new Cliff());
-        }
-        else level.push_back(new Ground());
-    }
-
-    level.push_back(new End());
-    level.push_back(new Ground());
-
-    for(int i=0; i < 10; i++)
-    {
-        int r = rand() % 7;
-        int pos = (rand() % ((level.size()*50)-700)) + 700;
+        int r = rand() % numberOfEnemieTypes;
+        int pos = (rand() % ((level.size()*50)-700)) + 600;
         switch(r){
             case 0: enemies.push_back(new Goomba(pos)); break;
             case 1: enemies.push_back(new Koopa(pos)); break;
-            case 3: enemies.push_back(new RedKoopa(pos)); break;
-            case 4: enemies.push_back(new BlueKoopa(pos)); break;
-            case 5: enemies.push_back(new YellowKoopa(pos)); break;
-            case 6: enemies.push_back(new BlackKoopa(pos)); break;
-            case 7: enemies.push_back(new Spiny(pos)); break;
+            case 2: enemies.push_back(new RedKoopa(pos)); break;
+            case 3: enemies.push_back(new BlueKoopa(pos)); break;
+            case 4: enemies.push_back(new YellowKoopa(pos)); break;
+            case 5: enemies.push_back(new BlackKoopa(pos)); break;
+            case 6: enemies.push_back(new Spiny(pos)); break;
         }
     }
-
 }
 
 bool Game::collided()
@@ -233,6 +289,7 @@ void Game::draw()
 
 void Game::drawBackgound()
 {
+    terrainTextureMap["background"].transparent(false);
     gout    << stamp(terrainTextureMap["background"],0,0);;
 }
 

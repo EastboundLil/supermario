@@ -24,6 +24,14 @@ public:
 private:
     bool newGame();
     void generateLevel();
+    void generateTerrain();
+    void generateEnemies();
+
+    void addGround();
+    void addPipe();
+    void addCliff();
+    void addStair();
+    void addDownStair();
 
     bool collided();
     bool fallen();
@@ -55,6 +63,9 @@ private:
 
     std::vector<std::string> tt;
     std::vector<std::string> et;
+
+    int numberOfTerrainTypes;
+    int numberOfEnemieTypes;
 
     event ev;
     Mario mario;

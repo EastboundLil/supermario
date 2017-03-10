@@ -36,7 +36,8 @@ public:
 
     void moveRight(int next)
     {
-        if(next == position.y + height)
+        if(next == position.y + height ||
+           next-50 == position.y + height)
         {
             distance += horizontalSpeed;
             position.x += horizontalSpeed;
@@ -46,7 +47,8 @@ public:
 
     void moveLeft(int prev)
     {
-        if(prev == position.y + height)
+        if(prev == position.y + height ||
+           prev-50 == position.y + height)
         {
             distance -= horizontalSpeed;
             position.x -= horizontalSpeed;
@@ -76,7 +78,8 @@ public:
 
     void moveRight(int next)
     {
-        if(next == position.y + height)
+        if(next == position.y + height ||
+           next-50 == position.y + height)
         {
             distance += horizontalSpeed;
             position.x += horizontalSpeed;
@@ -86,7 +89,8 @@ public:
 
     void moveLeft(int prev)
     {
-        if(prev == position.y + height)
+        if(prev == position.y + height ||
+           prev-50 == position.y + height)
         {
             distance -= horizontalSpeed;
             position.x -= horizontalSpeed;
