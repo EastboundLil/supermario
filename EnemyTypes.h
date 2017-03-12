@@ -16,23 +16,23 @@ struct EnemyTexture
 class Goomba : public Enemy
 {
 public:
-    Goomba(int distance) : Enemy(Position(800,100), "goomba", 46, distance, 1) {}
+    Goomba(int distance) : Enemy(Position(800,100), "goomba", 50, 46, distance, 1) {}
 };
 
 class Koopa : public Enemy
 {
 protected:
-    Koopa(int distance, std::string type) : Enemy(Position(800,100), type, 76, distance, 1) { health = 2; }
+    Koopa(int distance, std::string type, int value) : Enemy(Position(800,100), type, value, 76, distance, 1) { health = 2; }
 public:
-    Koopa(int distance) : Enemy(Position(800,100), "koopa", 76, distance, 1) { health = 2; }
+    Koopa(int distance) : Enemy(Position(800,100), "koopa", 100, 76, distance, 1) { health = 2; }
 };
 
 class RedKoopa : public Koopa
 {
 protected:
-    RedKoopa(int distance, std::string type) : Koopa(distance, type) {}
+    RedKoopa(int distance, std::string type, int value) : Koopa(distance, type, value) {}
 public:
-    RedKoopa(int distance) : Koopa(distance, "redkoopa") {}
+    RedKoopa(int distance) : Koopa(distance, "redkoopa", 150) {}
 
     void moveRight(int next)
     {
@@ -60,15 +60,15 @@ public:
 class BlueKoopa : public RedKoopa
 {
 public:
-    BlueKoopa(int distance) : RedKoopa(distance, "bluekoopa") { horizontalSpeed = 3; }
+    BlueKoopa(int distance) : RedKoopa(distance, "bluekoopa", 200) { horizontalSpeed = 3; }
 };
 
 class YellowKoopa : public RedKoopa
 {
 protected:
-    YellowKoopa(int distance, std::string type) : RedKoopa(distance, type) {}
+    YellowKoopa(int distance, std::string type, int value) : RedKoopa(distance, type, value) {}
 public:
-    YellowKoopa(int distance) : RedKoopa(distance, "yellowkoopa") { horizontalSpeed = 3; }
+    YellowKoopa(int distance) : RedKoopa(distance, "yellowkoopa", 250) { horizontalSpeed = 3; }
 
     void move(int prev, int next, int marioDist)
     {
@@ -102,7 +102,7 @@ public:
 class BlackKoopa : public YellowKoopa
 {
 public:
-    BlackKoopa(int distance) : YellowKoopa(distance, "blackkoopa") { horizontalSpeed = 3;}
+    BlackKoopa(int distance) : YellowKoopa(distance, "blackkoopa", 300) { horizontalSpeed = 3;}
 
     void jump()
     {
@@ -114,6 +114,6 @@ public:
 class Spiny : public RedKoopa
 {
 public:
-    Spiny(int distance) : RedKoopa(distance,"spiny") { height = 54; thorned = true;}
+    Spiny(int distance) : RedKoopa(distance,"spiny",500) { height = 54; thorned = true;}
 };
 #endif // ENEMYTYPES_H

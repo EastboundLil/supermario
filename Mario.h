@@ -12,11 +12,19 @@ public:
     Mario(int x, int y);
 
     void reset(int x, int y);
+    void init() {health = 2; score = 0;}
 
     void moveLeft(int prev);
     void moveRight(int next);
     void jump();
     void setSpeed(int s) {speed = s;}
+
+    int getScore() {return score;}
+    void addScore(int amount) {score += amount;}
+    void halveScore() {score = score/2;}
+
+private:
+    int score;
 };
 
 #endif // MARIO_H

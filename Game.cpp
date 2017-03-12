@@ -5,6 +5,8 @@ Game::Game() :
     WINDOW_WIDTH(1000),
     difficulty(1)
 {
+    //gout.load_font("LiberationSans-Regular.tff",100,false);
+
     srand(time(NULL));
     gin.timer(1);
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -13,8 +15,10 @@ Game::Game() :
     difficultyMenu = { "easy", "medium", "hard", "brutal" };
     characterMenu = { "dlc" };
 
-    tt = {  "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
-            "background","ground","cliff","pipe","pipehelper","end","endhelper","stair","stair2","stair3","stair4","stair5"};
+    tt = {  "life",
+            "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
+            "background","ground","cliff","pipe","pipehelper","end","endhelper",
+            "stair","stair2","stair3","stair4","stair5","castle", "castlehelper"};
     et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
 
     numberOfTerrainTypes = tt.size();
@@ -47,7 +51,10 @@ Game::Game() :
 
 bool Game::newGame()
 {
-    bool endLevel = false;
+    if(mario.getHealth() == -1) return false;
+
+    bool died = false;
+    bool win = false;
     mario.reset(WINDOW_WIDTH/2,0);
     generateLevel();
     movingRight = false;
@@ -55,7 +62,7 @@ bool Game::newGame()
 
     while(gin >> ev && ev.keycode != key_space) {
 
-        if(endLevel)
+        if(died)
         {
             mario.fall(WINDOW_HEIGHT+7000);
             if(mario.getHeight()+mario.getPosition().y == WINDOW_HEIGHT+7000) break;
@@ -87,16 +94,18 @@ bool Game::newGame()
                          mario.getDistance());
                 it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
             }
-            endLevel = collided() || fallen();
-            if(endLevel)
+            died = collided() || fallen();
+            if(died)
             {
                 mario.setSpeed(0);
                 mario.jump();
             }
+            win = mario.getDistance() == castleDistance-100;
+            if(win) return false;
         }
         draw();
     }
-
+    mario.decrementHealth();
     return true;
 }
 
@@ -124,7 +133,7 @@ void Game::generateTerrain()
         level.push_back(new Ground());
     }
 
-    for(int i = 0; i < 50; ++i)
+    for(int i = 0; i < difficulty*20; ++i)
     {
         addGround();
 
@@ -137,7 +146,14 @@ void Game::generateTerrain()
         }
     }
 
-    level.push_back(new End());
+    level.push_back(new Castle()); castleDistance = level.size()*50;
+    level.push_back(new CastleHelper());
+    level.push_back(new CastleHelper());
+    level.push_back(new CastleHelper());
+    level.push_back(new CastleHelper());
+    level.push_back(new Ground());
+    level.push_back(new Ground());
+    level.push_back(new Ground());
     level.push_back(new Ground());
 
 }
@@ -165,7 +181,7 @@ void Game::addPipe()
 
 void Game::addCliff()
 {
-    int r = rand() % 7;
+    int r = rand() % difficulty + 3;
 
     if(r < 3)
     {
@@ -185,7 +201,7 @@ void Game::addCliff()
 
 void Game::addStair()
 {
-    int r = rand() % 6;
+    int r = rand() % difficulty+2;
 
     std::vector<Terrain*> stairs;
     stairs.push_back(new Stair());
@@ -223,9 +239,9 @@ void Game::generateEnemies()
     }
     enemies.clear();
 
-    for(int i=0; i < 50; i++)
+    for(int i=0; i < difficulty*10; i++)
     {
-        int r = rand() % numberOfEnemieTypes;
+        int r = rand() % numberOfEnemieTypes-4+difficulty;
         int pos = (rand() % ((level.size()*50)-700)) + 600;
         switch(r){
             case 0: enemies.push_back(new Goomba(pos)); break;
@@ -261,6 +277,7 @@ bool Game::collided()
                 (*it)->decrementHealth();
                 if((*it)->getHealth() == 0)
                 {
+                    mario.addScore((*it)->getValue()*difficulty);
                     delete (*it);
                     enemies.erase(it);
                 }
@@ -268,8 +285,8 @@ bool Game::collided()
                 mario.jump();
             }
         }
-
     }
+    return false;
 }
 
 bool Game::fallen()
@@ -286,7 +303,7 @@ void Game::run()
         if(ev.keycode == key_up)    if(cursor != 0) cursor--;
         if(ev.keycode == key_down)  if(cursor != actualMenu->size()-1) cursor++;
         if(ev.keycode == key_escape) actualMenu = &mainMenu;
-        if(ev.keycode == key_enter) exectuteMenuElement();
+        if(ev.keycode == key_enter) executeMenuElement();
 
         drawMenu();
         drawCursor();
@@ -296,8 +313,9 @@ void Game::run()
 
 void Game::drawMenu()
 {
+    terrainTextureMap["menubackground"].transparent(false);
     gout << stamp(terrainTextureMap["menubackground"],0,0);
-    for(int i=0; i < actualMenu->size(); i++)
+    for(unsigned int i=0; i < actualMenu->size(); i++)
     {
         gout << stamp(terrainTextureMap[actualMenu->at(i)], (WINDOW_WIDTH/2)-100, 350+(i*50));
     }
@@ -308,9 +326,9 @@ void Game::drawCursor()
     gout << stamp(terrainTextureMap["cursor"], (WINDOW_WIDTH/2)-150, 350+(cursor*50));
 }
 
-void Game::exectuteMenuElement()
+void Game::executeMenuElement()
 {
-    if(actualMenu->at(cursor) == "newgame")         while(newGame());
+    if(actualMenu->at(cursor) == "newgame")         { mario.init(); while(newGame()); }
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       quitGame = true;
@@ -325,6 +343,7 @@ void Game::draw()
     drawBackgound();
     drawLevel();
     drawMario();
+    drawHud();
     drawEnemies();
 
     gout << refresh;
@@ -360,6 +379,21 @@ void Game::drawMario()
         gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
 }
 
+void Game::drawHud()
+{
+    std::string health,score;
+    std::ostringstream temph,temps;
+    temph<<mario.getHealth();
+    health=temph.str();
+    temps<<mario.getScore();
+    score=temps.str();
+
+    gout << stamp(terrainTextureMap["life"],50,20);
+    gout << color(255,255,255);
+    gout << move_to(110,40) << text("X ") << text(health);
+    gout << move_to(160,40) << text("Score: ") <<text(score);
+}
+
 void Game::drawLevel()
 {
     int offset = 500;
@@ -367,7 +401,8 @@ void Game::drawLevel()
     {
         if(it->getType() != "pipehelper" &&
            it->getType() != "endhelper"  &&
-           it->getType() != "cliff")
+           it->getType() != "cliff"      &&
+           it->getType() != "castlehelper")
                 drawTerrain(it->getType(),it->getHeight(),offset);
         offset += 50;
     }

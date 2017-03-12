@@ -9,6 +9,8 @@
 #include <map>
 #include <cstdlib>
 #include <time.h>
+#include <string>
+#include <sstream>
 #include "Mario.h"
 #include "TextureTypes.h"
 #include "EnemyTypes.h"
@@ -39,6 +41,7 @@ private:
     void draw();
     void drawBackgound();
     void drawMario();
+    void drawHud();
     void drawLevel();
     void drawEnemies();
 
@@ -85,15 +88,16 @@ private:
     bool movingRight = false;
     bool movingLeft = false;
 
-    int cursor;
+    unsigned int cursor;
     bool quitGame;
+    int castleDistance;
     int difficulty;
     std::vector<std::string>* actualMenu;
     std::vector<std::string>  mainMenu;
     std::vector<std::string>  difficultyMenu;
     std::vector<std::string>  characterMenu;
 
-    void exectuteMenuElement();
+    void executeMenuElement();
 
 };
 #endif // GAME_H

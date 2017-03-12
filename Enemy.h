@@ -6,8 +6,9 @@
 class Enemy : public Terrain
 {
 public:
-    Enemy(Position pos,std::string type, int height, int distance, int horizontalSpeed) :
+    Enemy(Position pos, std::string type, int value, int height, int distance, int horizontalSpeed) :
         Terrain(pos, type, height),
+        value(value),
         distance(distance),
         horizontalSpeed(horizontalSpeed),
         acceleration(1),
@@ -65,15 +66,19 @@ public:
         }
     }
 
-    int     getDistance()       {return distance;}
-    int     getSpeed()          {return speed;}
-    bool    isMovingLeft()      {return movingLeft;}
-    int     getHealth()         {return health;}
-    bool    isThorned()         {return thorned;}
+    virtual ~Enemy() {};
+
+    int     getDistance()   {return distance;}
+    int     getSpeed()      {return speed;}
+    bool    isMovingLeft()  {return movingLeft;}
+    int     getHealth()     {return health;}
+    bool    isThorned()     {return thorned;}
+    int     getValue()      {return value;}
 
     void zeroSpeed()        {speed = 0;}
     void changeDirection()  {movingLeft = !movingLeft;}
     void decrementHealth()  {health--;}
+    void setHealth(int h)   {health = h;}
 
 protected:
     int     distance;
@@ -83,6 +88,7 @@ protected:
     bool    movingLeft;
     int     health;
     bool    thorned;
+    int     value;
 };
 
 #endif // ENEMY_H

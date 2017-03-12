@@ -1,15 +1,19 @@
 #include "Mario.h"
 
 Mario::Mario() :
-    Enemy(Position(100,116), "mario", 64, 300, 5)
+    Enemy(Position(100,116), "mario", 0, 64, 300, 5),
+    score(0)
 {
     movingLeft = false;
+    health = 2;
 }
 
 Mario::Mario(int x, int y) :
-    Enemy(Position(x,y), "mario", 64, 300,5)
+    Enemy(Position(x,y), "mario", 0, 64, 300,5),
+    score(0)
 {
     movingLeft = false;
+    health = 2;
 }
 
 void Mario::reset(int x, int y)

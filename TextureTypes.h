@@ -34,6 +34,18 @@ public:
     EndHelper() : Terrain(Position(), "endhelper", 500) {}
 };
 
+class Castle : public Terrain
+{
+public:
+    Castle() : Terrain(Position(), "castle", 343) {}
+};
+
+class CastleHelper : public Terrain
+{
+public:
+    CastleHelper() : Terrain(Position(), "castlehelper",50) {}
+};
+
 class Cliff : public Terrain
 {
 public:
