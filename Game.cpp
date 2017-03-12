@@ -2,13 +2,20 @@
 
 Game::Game() :
     WINDOW_HEIGHT(600),
-    WINDOW_WIDTH(1000)
+    WINDOW_WIDTH(1000),
+    difficulty(1)
 {
     srand(time(NULL));
     gin.timer(1);
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
-    tt = {"background","ground","cliff","pipe","pipehelper","end","endhelper","stair","stair2","stair3","stair4","stair5"};
-    et = {"goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
+
+    mainMenu = { "newgame","difficulty","character","quit"};
+    difficultyMenu = { "easy", "medium", "hard", "brutal" };
+    characterMenu = { "dlc" };
+
+    tt = {  "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
+            "background","ground","cliff","pipe","pipehelper","end","endhelper","stair","stair2","stair3","stair4","stair5"};
+    et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
 
     numberOfTerrainTypes = tt.size();
     numberOfEnemieTypes = et.size();
@@ -121,12 +128,12 @@ void Game::generateTerrain()
     {
         addGround();
 
-        int r = rand() % numberOfTerrainTypes+1;
+        int r = rand() % 4;
         switch(r){
-            case 1: addPipe();      addGround(); break;
-            case 2: addCliff();     addGround(); break;
-            case 3: addStair();     addGround(); break;
-            case 4: addDownStair(); addGround(); break;
+            case 0: addPipe();      addGround(); break;
+            case 1: addCliff();     addGround(); break;
+            case 2: addStair();     addGround(); break;
+            case 3: addDownStair(); addGround(); break;
         }
     }
 
@@ -216,7 +223,7 @@ void Game::generateEnemies()
     }
     enemies.clear();
 
-    for(int i=0; i < 15; i++)
+    for(int i=0; i < 50; i++)
     {
         int r = rand() % numberOfEnemieTypes;
         int pos = (rand() % ((level.size()*50)-700)) + 600;
@@ -272,9 +279,45 @@ bool Game::fallen()
 
 void Game::run()
 {
-    while(newGame())
-    {
+    quitGame = false;
+    cursor = 0;
+    actualMenu = &mainMenu;
+    while(gin >> ev && !quitGame) {
+        if(ev.keycode == key_up)    if(cursor != 0) cursor--;
+        if(ev.keycode == key_down)  if(cursor != actualMenu->size()-1) cursor++;
+        if(ev.keycode == key_escape) actualMenu = &mainMenu;
+        if(ev.keycode == key_enter) exectuteMenuElement();
+
+        drawMenu();
+        drawCursor();
+        gout << refresh;
     }
+}
+
+void Game::drawMenu()
+{
+    gout << stamp(terrainTextureMap["menubackground"],0,0);
+    for(int i=0; i < actualMenu->size(); i++)
+    {
+        gout << stamp(terrainTextureMap[actualMenu->at(i)], (WINDOW_WIDTH/2)-100, 350+(i*50));
+    }
+}
+
+void Game::drawCursor()
+{
+    gout << stamp(terrainTextureMap["cursor"], (WINDOW_WIDTH/2)-150, 350+(cursor*50));
+}
+
+void Game::exectuteMenuElement()
+{
+    if(actualMenu->at(cursor) == "newgame")         while(newGame());
+    else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "quit")       quitGame = true;
+    else if(actualMenu->at(cursor) == "easy")       { difficulty = 1; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "medium")     { difficulty = 2; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "hard")       { difficulty = 3; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "brutal")     { difficulty = 4; actualMenu = &mainMenu; cursor = 0; }
 }
 
 void Game::draw()

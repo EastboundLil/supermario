@@ -77,9 +77,9 @@ public:
 
 protected:
     int     distance;
+    int     horizontalSpeed;
     int     acceleration;
     int     speed;
-    int     horizontalSpeed;
     bool    movingLeft;
     int     health;
     bool    thorned;

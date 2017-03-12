@@ -42,6 +42,9 @@ private:
     void drawLevel();
     void drawEnemies();
 
+    void drawMenu();
+    void drawCursor();
+
     void drawTerrain(std::string type, int height, int offset);
     void drawEnemy(std::string type, int distance, int y, bool isMovingLeft, bool timer);
 
@@ -81,6 +84,16 @@ private:
 
     bool movingRight = false;
     bool movingLeft = false;
-};
 
+    int cursor;
+    bool quitGame;
+    int difficulty;
+    std::vector<std::string>* actualMenu;
+    std::vector<std::string>  mainMenu;
+    std::vector<std::string>  difficultyMenu;
+    std::vector<std::string>  characterMenu;
+
+    void exectuteMenuElement();
+
+};
 #endif // GAME_H
