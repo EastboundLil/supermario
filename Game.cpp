@@ -15,15 +15,15 @@ Game::Game() :
 
     mainMenu = { "newgame","difficulty","character","quit"};
     difficultyMenu = { "easy", "medium", "hard", "brutal" };
-    characterMenu = { "mariohead","flashhead" };
+    characterMenu = { "mariohead","flashhead","empire" };
 
-    tt = {  "life", "mariohead", "flashhead",
+    tt = {  "life", "mariohead", "flashhead","empire",
             "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
             "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
             "pipe","pipehelper","smallpipe","smallpipehelper","end","endhelper",
             "stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
     et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
-    mt = {  "mario", "flash"};
+    mt = {  "mario","flash","vader"};
 
     numberOfTerrainTypes = tt.size();
     numberOfEnemieTypes = et.size();
@@ -80,7 +80,7 @@ bool Game::newGame()
     movingRight = false;
     movingLeft = false;
 
-    while(gin >> ev && ev.keycode != key_space) {
+    while(gin >> ev) {
 
         if(died)
         {
@@ -99,6 +99,8 @@ bool Game::newGame()
             if(ev.keycode == -key_right)    movingRight = false;
             if(ev.keycode == key_left)      movingLeft = true;
             if(ev.keycode == -key_left)     movingLeft = false;
+            if(ev.keycode == key_space)     mario.sprintOn();
+            if(ev.keycode == -key_space)    mario.sprintOff();
             if(ev.keycode == key_up)        mario.jump();
 
             if(movingRight) mario.moveRight(NEXT_HEIGHT);
@@ -396,6 +398,7 @@ void Game::executeMenuElement()
     else if(actualMenu->at(cursor) == "brutal")     { difficulty = 4; actualMenu = &mainMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "mariohead")      { character = "mario"; actualMenu = &mainMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "flashhead")      { character = "flash"; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "empire")      { character = "vader"; actualMenu = &mainMenu; cursor = 0; }
 }
 
 void Game::draw()

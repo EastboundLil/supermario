@@ -6,6 +6,7 @@ Mario::Mario() :
 {
     movingLeft = false;
     health = 2;
+    sprint = 0;
 }
 
 void Mario::reset(int x, int y)
@@ -18,7 +19,8 @@ void Mario::moveRight(int next)
 {
     if(next >= position.y + height)
     {
-        distance += horizontalSpeed;
+        LOG("sprint: " << sprint);
+        distance += horizontalSpeed + sprint;
     }
     movingLeft = false;
 }
@@ -27,7 +29,7 @@ void Mario::moveLeft(int prev)
 {
     if(prev >= position.y + height)
     {
-        distance -= horizontalSpeed;
+        distance -= horizontalSpeed + sprint;
     }
     movingLeft = true;
 }
