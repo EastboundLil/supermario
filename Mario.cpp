@@ -13,6 +13,7 @@ void Mario::reset(int x, int y)
 {
     setPosition(x,y);
     distance = 300;
+    sprint = 0;
 }
 
 void Mario::moveRight(int next)

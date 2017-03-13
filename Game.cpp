@@ -22,7 +22,7 @@ Game::Game() :
             "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
             "pipe","pipehelper","smallpipe","smallpipehelper","end","endhelper",
             "stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
-    et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
+    et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny","boo"};
     mt = {  "mario","flash","vader"};
 
     numberOfTerrainTypes = tt.size();
@@ -110,6 +110,7 @@ bool Game::newGame()
             {
                 if(ev.keycode == key_up)
                     it->jump();
+                it->setMarioPos(mario.getPosition());
                 it->move(WINDOW_HEIGHT - level.at(((it->getDistance())/50))->getHeight(),
                          WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight(),
                          mario.getDistance());
@@ -153,7 +154,7 @@ void Game::generateTerrain()
     {
         level.push_back(new Ground());
     }
-    addMediumHill();
+
     for(int i = 0; i < difficulty*20; ++i)
     {
         addGround();
@@ -310,6 +311,7 @@ void Game::generateEnemies()
             case 4: enemies.push_back(new YellowKoopa(pos)); break;
             case 5: enemies.push_back(new BlackKoopa(pos)); break;
             case 6: enemies.push_back(new Spiny(pos)); break;
+            case 7: enemies.push_back(new Boo(pos)); break;
         }
     }
 }

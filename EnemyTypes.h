@@ -116,4 +116,50 @@ class Spiny : public RedKoopa
 public:
     Spiny(int distance) : RedKoopa(distance,"spiny",500) { height = 54; thorned = true;}
 };
+
+class Boo : public YellowKoopa
+{
+public:
+    Boo(int distance) : YellowKoopa(distance,"boo",0) { height = 50; thorned = true;}
+
+    void move(int prev, int next, int marioDist)
+    {
+        if(marioDist < distance) moveLeft(marioDist);
+        else moveRight(marioDist);
+    }
+
+    void moveRight(int marioDist)
+    {
+        distance += horizontalSpeed;
+        double d = sqrt(pow(distance - marioDist,2) + pow(position.y - marioPos.y,2));
+        double x = marioDist - distance;
+        double y = marioPos.y - position.y;
+        distance += x/d;
+        position.y += y/d;
+        movingLeft = false;
+    }
+
+    void moveLeft(int marioDist)
+    {
+        distance -= horizontalSpeed;
+        double d = sqrt(pow(distance - marioDist,2) + pow(position.y - marioPos.y,2));
+        double x = marioDist - distance;
+        double y = marioPos.y - position.y;
+        distance += x/d;
+        position.y += y/d;
+        movingLeft = true;
+    }
+
+    void fall(int groundLevel)
+    {
+        //do nothing
+    }
+
+     void setMarioPos(Position pos)
+    {
+        marioPos = pos;
+    }
+private:
+    Position marioPos;
+};
 #endif // ENEMYTYPES_H

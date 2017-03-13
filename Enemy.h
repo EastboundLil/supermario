@@ -2,6 +2,7 @@
 #define ENEMY_H
 
 #include "Terrain.h"
+#include <cmath>
 
 class Enemy : public Terrain
 {
@@ -64,6 +65,11 @@ public:
             speed = 0;
             position.y = groundLevel;
         }
+    }
+
+    virtual void setMarioPos(Position pos)
+    {
+        //do nothing
     }
 
     virtual ~Enemy() {};

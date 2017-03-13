@@ -62,7 +62,7 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1489436009 source:c:\git_repo\beadando\game.cpp
+1489442398 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
 1489412358 c:\git_repo\beadando\game.h
@@ -92,7 +92,7 @@
 	"Mario.h"
 	"Ground.h"
 
-1489436017 c:\git_repo\beadando\mario.h
+1489442056 c:\git_repo\beadando\mario.h
 	"Position.h"
 	"Enemy.h"
 	"graphics.hpp"
@@ -123,7 +123,7 @@
 1487324575 source:c:\git_repo\beadando\main.cpp
 	"Game.h"
 
-1489436058 source:c:\git_repo\beadando\mario.cpp
+1489438240 source:c:\git_repo\beadando\mario.cpp
 	"Mario.h"
 
 1488958131 source:c:\git_repo\beadando\terrain.cpp
@@ -140,10 +140,11 @@
 1489408274 c:\git_repo\beadando\texturetypes.h
 	"Terrain.h"
 
-1489345106 c:\git_repo\beadando\enemy.h
+1489442303 c:\git_repo\beadando\enemy.h
 	"Terrain.h"
+	<cmath>
 
-1489345260 c:\git_repo\beadando\enemytypes.h
+1489443042 c:\git_repo\beadando\enemytypes.h
 	"Enemy.h"
 
 1489172071 source:e:\git_repo\supermario\main.cpp
