@@ -11,6 +11,7 @@
 #include <time.h>
 #include <string>
 #include <sstream>
+#include <windows.h>
 #include "Mario.h"
 #include "TextureTypes.h"
 #include "EnemyTypes.h"
@@ -31,7 +32,10 @@ private:
 
     void addGround();
     void addPipe();
+    void addSmallPipe();
     void addCliff();
+    void addHill();
+    void addMediumHill();
     void addStair();
     void addDownStair();
 
@@ -66,22 +70,18 @@ private:
     std::list<Enemy*> enemies;
     std::map<std::string, canvas> terrainTextureMap;
     std::map<std::string, std::vector<canvas> > enemyTextureMap;
+    std::map<std::string, std::vector<canvas> > marioTextureMap;
 
     std::vector<std::string> tt;
     std::vector<std::string> et;
+    std::vector<std::string> mt;
 
     int numberOfTerrainTypes;
     int numberOfEnemieTypes;
+    int numberOfMarioTypes;
 
     event ev;
     Mario mario;
-
-    canvas marioRightTexture;
-    canvas marioLeftTexture;
-    canvas marioJumpRightTexture;
-    canvas marioJumpLeftTexture;
-    canvas marioRunRightTexture;
-    canvas marioRunLeftTexture;
 
     std::fstream f;
 
@@ -92,6 +92,7 @@ private:
     bool quitGame;
     int castleDistance;
     int difficulty;
+    std::string character;
     std::vector<std::string>* actualMenu;
     std::vector<std::string>  mainMenu;
     std::vector<std::string>  difficultyMenu;

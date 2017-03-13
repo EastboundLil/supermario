@@ -9,7 +9,6 @@ class Mario : public Enemy
 {
 public:
     Mario();
-    Mario(int x, int y);
 
     void reset(int x, int y);
     void init() {health = 2; score = 0;}

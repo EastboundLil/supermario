@@ -3,26 +3,31 @@
 Game::Game() :
     WINDOW_HEIGHT(600),
     WINDOW_WIDTH(1000),
-    difficulty(1)
+    difficulty(1),
+    character("mario")
 {
     //gout.load_font("LiberationSans-Regular.tff",100,false);
 
     srand(time(NULL));
     gin.timer(1);
     gout.open(WINDOW_WIDTH,WINDOW_HEIGHT);
+    gout.showmouse(false);
 
     mainMenu = { "newgame","difficulty","character","quit"};
     difficultyMenu = { "easy", "medium", "hard", "brutal" };
-    characterMenu = { "dlc" };
+    characterMenu = { "mariohead","flashhead" };
 
-    tt = {  "life",
+    tt = {  "life", "mariohead", "flashhead",
             "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
-            "background","ground","cliff","pipe","pipehelper","end","endhelper",
-            "stair","stair2","stair3","stair4","stair5","castle", "castlehelper"};
+            "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
+            "pipe","pipehelper","smallpipe","smallpipehelper","end","endhelper",
+            "stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
     et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny"};
+    mt = {  "mario", "flash"};
 
     numberOfTerrainTypes = tt.size();
     numberOfEnemieTypes = et.size();
+    numberOfMarioTypes = mt.size();
 
     for(std::string s : tt)
         terrainTextureMap[s] = canvas();
@@ -33,20 +38,35 @@ Game::Game() :
     c.push_back(canvas());
     c.push_back(canvas());
 
+    std::vector<canvas> c2;
+    c2.push_back(canvas());
+    c2.push_back(canvas());
+    c2.push_back(canvas());
+    c2.push_back(canvas());
+    c2.push_back(canvas());
+    c2.push_back(canvas());
+
     for(std::string s : et)
     {
         enemyTextureMap[s] = c;
     }
 
+    for(std::string s : mt)
+    {
+        marioTextureMap[s] = c2;
+    }
+
+    for(std::map<std::string,std::vector<canvas> >::iterator m = marioTextureMap.begin(); m != marioTextureMap.end(); m++)
+    {
+        LOG("first: " << m->first);
+        readTexture(m->first,m->second.at(0),m->second.at(1),m->second.at(2),m->second.at(3));
+        readTexture(m->first + "jump",m->second.at(4),m->second.at(5));
+    };
+
     for(std::map<std::string,canvas>::iterator t = terrainTextureMap.begin(); t != terrainTextureMap.end(); t++)
         readTexture(t->first,t->second);
     for(std::map<std::string,std::vector<canvas> >::iterator e = enemyTextureMap.begin(); e != enemyTextureMap.end(); e++)
         readTexture(e->first,e->second.at(0),e->second.at(1),e->second.at(2),e->second.at(3));
-
-    readTexture("mario",marioLeftTexture,marioRightTexture);
-    readTexture("jump",marioJumpLeftTexture,marioJumpRightTexture);
-    readTexture("run",marioRunLeftTexture,marioRunRightTexture);
-
 }
 
 bool Game::newGame()
@@ -84,7 +104,6 @@ bool Game::newGame()
             if(movingRight) mario.moveRight(NEXT_HEIGHT);
             if(movingLeft) mario.moveLeft(PREV_HEIGHT);
             mario.fall(CURRENT_HEIGHT);
-
             for(Enemy* it : enemies)
             {
                 if(ev.keycode == key_up)
@@ -132,17 +151,20 @@ void Game::generateTerrain()
     {
         level.push_back(new Ground());
     }
-
+    addMediumHill();
     for(int i = 0; i < difficulty*20; ++i)
     {
         addGround();
 
-        int r = rand() % 4;
+        int r = rand() % 7;
         switch(r){
             case 0: addPipe();      addGround(); break;
-            case 1: addCliff();     addGround(); break;
-            case 2: addStair();     addGround(); break;
-            case 3: addDownStair(); addGround(); break;
+            case 1: addSmallPipe(); addGround(); break;
+            case 2: addCliff();     addGround(); break;
+            case 3: addHill();      addGround(); break;
+            case 4: addMediumHill();addGround(); break;
+            case 5: addStair();     addGround(); break;
+            case 6: addDownStair(); addGround(); break;
         }
     }
 
@@ -179,9 +201,21 @@ void Game::addPipe()
     for(int i = 0; i < r; i++)  level.push_back(new Ground());
 }
 
+void Game::addSmallPipe()
+{
+    int r = rand() % 3;
+    for(int i = 1; i < r; i++)  level.push_back(new Ground());
+
+    level.push_back(new SmallPipe());
+    level.push_back(new SmallPipeHelper());
+
+    r = rand() % 3;
+    for(int i = 0; i < r; i++)  level.push_back(new Ground());
+}
+
 void Game::addCliff()
 {
-    int r = rand() % difficulty + 3;
+    int r = rand() % difficulty + 1;
 
     if(r < 3)
     {
@@ -197,6 +231,28 @@ void Game::addCliff()
             level.push_back(new Ground());
         }
     }
+}
+
+void Game::addHill()
+{
+    level.push_back(new HillBegin());
+    int r = rand() % 6;
+    for(int i=0; i < r; i++)
+    {
+        level.push_back(new Hill());
+    }
+    level.push_back(new HillEnd());
+}
+
+void Game::addMediumHill()
+{
+    level.push_back(new MediumHillBegin());
+    int r = rand() % 6;
+    for(int i=0; i < r; i++)
+    {
+        level.push_back(new MediumHill());
+    }
+    level.push_back(new MediumHillEnd());
 }
 
 void Game::addStair()
@@ -242,7 +298,8 @@ void Game::generateEnemies()
     for(int i=0; i < difficulty*10; i++)
     {
         int r = rand() % numberOfEnemieTypes-4+difficulty;
-        int pos = (rand() % ((level.size()*50)-700)) + 600;
+        int temp = (level.size()*50) - castleDistance;
+        int pos = (rand() % ((level.size()*50)-temp-700)) + 600;
         switch(r){
             case 0: enemies.push_back(new Goomba(pos)); break;
             case 1: enemies.push_back(new Koopa(pos)); break;
@@ -296,6 +353,7 @@ bool Game::fallen()
 
 void Game::run()
 {
+    PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);
     quitGame = false;
     cursor = 0;
     actualMenu = &mainMenu;
@@ -328,7 +386,7 @@ void Game::drawCursor()
 
 void Game::executeMenuElement()
 {
-    if(actualMenu->at(cursor) == "newgame")         { mario.init(); while(newGame()); }
+    if(actualMenu->at(cursor) == "newgame")         { mario.init(); PlaySound(TEXT("music/overworld.wav"),NULL,SND_ASYNC);while(newGame()); PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);}
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       quitGame = true;
@@ -336,6 +394,8 @@ void Game::executeMenuElement()
     else if(actualMenu->at(cursor) == "medium")     { difficulty = 2; actualMenu = &mainMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "hard")       { difficulty = 3; actualMenu = &mainMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "brutal")     { difficulty = 4; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "mariohead")      { character = "mario"; actualMenu = &mainMenu; cursor = 0; }
+    else if(actualMenu->at(cursor) == "flashhead")      { character = "flash"; actualMenu = &mainMenu; cursor = 0; }
 }
 
 void Game::draw()
@@ -358,25 +418,25 @@ void Game::drawBackgound()
 void Game::drawMario()
 {
     if(mario.getSpeed() != 0 && movingRight)
-        gout << stamp(marioJumpRightTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(5),mario.getPosition().x,mario.getPosition().y);
     else if(mario.getSpeed() != 0 && movingLeft)
-        gout << stamp(marioJumpLeftTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(4),mario.getPosition().x,mario.getPosition().y);
     else if(movingLeft && (ev.time / 30) % 10 < 5)
-        gout << stamp(marioRunLeftTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(0),mario.getPosition().x,mario.getPosition().y);
     else if(movingLeft && (ev.time / 30) % 10 >= 5)
-        gout << stamp(marioLeftTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(2),mario.getPosition().x,mario.getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 < 5)
-        gout << stamp(marioRunRightTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(1),mario.getPosition().x,mario.getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 >= 5)
-        gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(3),mario.getPosition().x,mario.getPosition().y);
     else if(mario.getSpeed() != 0 && !mario.isMovingLeft())
-        gout << stamp(marioJumpRightTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(5),mario.getPosition().x,mario.getPosition().y);
     else if(mario.getSpeed() != 0 && mario.isMovingLeft())
-        gout << stamp(marioJumpLeftTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(4),mario.getPosition().x,mario.getPosition().y);
     else if(mario.isMovingLeft())
-        gout << stamp(marioLeftTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(0),mario.getPosition().x,mario.getPosition().y);
     else if(!mario.isMovingLeft())
-        gout << stamp(marioRightTexture,mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(1),mario.getPosition().x,mario.getPosition().y);
 }
 
 void Game::drawHud()
@@ -400,6 +460,7 @@ void Game::drawLevel()
     for(Terrain *it : level)
     {
         if(it->getType() != "pipehelper" &&
+           it->getType() != "smallpipehelper" &&
            it->getType() != "endhelper"  &&
            it->getType() != "cliff"      &&
            it->getType() != "castlehelper")
@@ -470,7 +531,6 @@ void Game::readTexture(std::string filename, canvas& leftTexture, canvas& rightT
     filename = "pics/" + filename + ".kep";
     LOG("reading file: " << filename);
     f.open(filename);
-
     rightTexture.transparent(true);
     leftTexture.transparent(true);
 
@@ -479,10 +539,8 @@ void Game::readTexture(std::string filename, canvas& leftTexture, canvas& rightT
         int w,h,r,g,b = 0;
         f >> w;
         f >> h;
-
         rightTexture.open(w,h);
         leftTexture.open(w,h);
-
         for(int i = 0; i < h; ++i)
         {
             for(int j = 0; j < w; ++j)
