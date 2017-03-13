@@ -146,3 +146,66 @@
 1489345260 c:\git_repo\beadando\enemytypes.h
 	"Enemy.h"
 
+1489172071 source:e:\git_repo\supermario\main.cpp
+	"Game.h"
+
+1489431507 e:\git_repo\supermario\game.h
+	"graphics.hpp"
+	"Logger.h"
+	"fstream"
+	<vector>
+	<list>
+	<map>
+	<cstdlib>
+	<time.h>
+	<string>
+	<sstream>
+	<windows.h>
+	"Mario.h"
+	"TextureTypes.h"
+	"EnemyTypes.h"
+
+1489172071 e:\git_repo\supermario\include\graphics.hpp
+	<string>
+
+1489172071 e:\git_repo\supermario\logger.h
+	<iostream>
+
+1489431507 e:\git_repo\supermario\mario.h
+	"Position.h"
+	"Enemy.h"
+	"graphics.hpp"
+
+1489172071 e:\git_repo\supermario\position.h
+
+1489431495 e:\git_repo\supermario\enemy.h
+	"Terrain.h"
+
+1489172071 e:\git_repo\supermario\terrain.h
+	"Color.h"
+	"Position.h"
+	"graphics.hpp"
+	"Widget.h"
+
+1489172071 e:\git_repo\supermario\color.h
+
+1489172071 e:\git_repo\supermario\widget.h
+	"graphics.hpp"
+	"Color.h"
+	"Logger.h"
+
+1489431507 e:\git_repo\supermario\texturetypes.h
+	"Terrain.h"
+
+1489357162 e:\git_repo\supermario\enemytypes.h
+	"Enemy.h"
+
+1489172071 source:e:\git_repo\supermario\terrain.cpp
+	"Terrain.h"
+
+1489431507 source:e:\git_repo\supermario\game.cpp
+	"Game.h"
+
+1489431507 source:e:\git_repo\supermario\mario.cpp
+	"Mario.h"
+
