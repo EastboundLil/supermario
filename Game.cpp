@@ -341,24 +341,27 @@ void Game::generateEnemies()
     }
     enemies.clear();
 
-    for(int i=0; i < 10; i++)
+    for(int i=0; i < difficulty*15; i++)
     {
-        int r = 8;//rand() % numberOfEnemieTypes-4+difficulty;
+        int r = rand() % numberOfEnemieTypes-4+difficulty;
         int temp = (level.size()*50) - castleDistance;
         int pos = (rand() % ((level.size()*50)-temp-700)) + 600;
         int pipe = rand() % posOfPipes().size();
+        int height = WINDOW_HEIGHT - level.at(posOfPipes().at(pipe))->getHeight();
+        pipe = posOfPipes().at(pipe)*50 + 17;
 
         switch(r){
             case 0: enemies.push_back(new Goomba(pos)); break;
-            case 1: enemies.push_back(new Koopa(pos)); break;
-            case 2: enemies.push_back(new RedKoopa(pos)); break;
-            case 3: enemies.push_back(new BlueKoopa(pos)); break;
-            case 4: enemies.push_back(new YellowKoopa(pos)); break;
-            case 5: enemies.push_back(new BlackKoopa(pos)); break;
-            case 6: enemies.push_back(new Spiny(pos)); break;
-            case 7: enemies.push_back(new Boo(pos)); break;
-            case 8: enemies.push_back(new PiranhaPlant( posOfPipes().at(pipe)*50 + 17,
-                                                        level.at(posOfPipes().at(pipe))->getPosition().y)); break;
+            case 1: enemies.push_back(new PiranhaPlant(pipe,height));
+                    enemies.push_back(new PiranhaPlant(pipe,height));break;
+            case 2: enemies.push_back(new Koopa(pos)); break;
+            case 3: enemies.push_back(new RedKoopa(pos)); break;
+            case 4: enemies.push_back(new BlueKoopa(pos)); break;
+            case 5: enemies.push_back(new YellowKoopa(pos)); break;
+            case 6: enemies.push_back(new BlackKoopa(pos)); break;
+            case 7: enemies.push_back(new Spiny(pos)); break;
+            case 8: enemies.push_back(new Boo(pos)); break;
+
         }
     }
 }

@@ -62,7 +62,7 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1489495207 source:c:\git_repo\beadando\game.cpp
+1489497922 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
 1489484327 c:\git_repo\beadando\game.h
@@ -144,7 +144,7 @@
 	"Terrain.h"
 	<cmath>
 
-1489495512 c:\git_repo\beadando\enemytypes.h
+1489497963 c:\git_repo\beadando\enemytypes.h
 	"Enemy.h"
 
 1489172071 source:e:\git_repo\supermario\main.cpp

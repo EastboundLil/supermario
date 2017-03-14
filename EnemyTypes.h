@@ -165,8 +165,8 @@ public:
 class PiranhaPlant : public Enemy
 {
 public:
-    PiranhaPlant(int distance, int height) : Enemy(Position(800,(2*height)+10), "piranhaplant", 0, 100, distance, 0),
-                                             tick(0) {speed = 1;}
+    PiranhaPlant(int distance, int height) : Enemy(Position(800,height), "piranhaplant", 0, 100, distance, 0),
+                                             tick(0) {speed = -1; thorned = true;}
 
     void move(int prev, int next)
     {
