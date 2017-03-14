@@ -20,9 +20,9 @@ Game::Game() :
     tt = {  "life", "mariohead", "flashhead","empire",
             "menubackground","cursor", "newgame","difficulty","character","quit","easy","medium","hard","brutal","dlc",
             "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
-            "pipe","pipehelper","smallpipe","smallpipehelper","end","endhelper",
-            "stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
-    et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny","boo"};
+            "highhillbegin","highhill","highhillend","pipe","pipehelper","smallpipe","smallpipehelper","highpipe","highpipehelper",
+            "end","endhelper","stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
+    et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny","boo","piranhaplant"};
     mt = {  "mario","flash","vader"};
 
     numberOfTerrainTypes = tt.size();
@@ -71,11 +71,11 @@ Game::Game() :
 
 bool Game::newGame()
 {
-    if(mario.getHealth() == -1) return false;
+    if(Mario::getInstance().getHealth() == -1) return false;
 
     bool died = false;
     bool win = false;
-    mario.reset(WINDOW_WIDTH/2,0);
+    Mario::getInstance().reset(WINDOW_WIDTH/2,0);
     generateLevel();
     movingRight = false;
     movingLeft = false;
@@ -84,50 +84,51 @@ bool Game::newGame()
 
         if(died)
         {
-            mario.fall(WINDOW_HEIGHT+7000);
-            if(mario.getHeight()+mario.getPosition().y == WINDOW_HEIGHT+7000) break;
+            Mario::getInstance().fall(WINDOW_HEIGHT+7000);
+            if(Mario::getInstance().getHeight()+Mario::getInstance().getPosition().y == WINDOW_HEIGHT+7000) break;
         }
         else
         {
             if(ev.keycode == key_escape) return false;
 
-            int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at((mario.getDistance()+25)/50)->getHeight();
-            int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50))->getHeight();
-            int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((mario.getDistance()/50)+1)->getHeight();
+            //int CURRENT_HEIGHT_L  = WINDOW_HEIGHT - level.at((Mario::getInstance().getDistance())/50)->getHeight();
+            //int CURRENT_HEIGHT_R  = WINDOW_HEIGHT - level.at((Mario::getInstance().getDistance()+50)/50)->getHeight();
+            int CURRENT_HEIGHT  = WINDOW_HEIGHT - level.at((Mario::getInstance().getDistance()+25)/50)->getHeight();
+            int PREV_HEIGHT     = WINDOW_HEIGHT - level.at((Mario::getInstance().getDistance()/50))->getHeight();
+            int NEXT_HEIGHT     = WINDOW_HEIGHT - level.at((Mario::getInstance().getDistance()/50)+1)->getHeight();
 
             if(ev.keycode == key_right)     movingRight = true;
             if(ev.keycode == -key_right)    movingRight = false;
             if(ev.keycode == key_left)      movingLeft = true;
             if(ev.keycode == -key_left)     movingLeft = false;
-            if(ev.keycode == key_space)     mario.sprintOn();
-            if(ev.keycode == -key_space)    mario.sprintOff();
-            if(ev.keycode == key_up)        mario.jump();
+            if(ev.keycode == key_space)     Mario::getInstance().sprintOn();
+            if(ev.keycode == -key_space)    Mario::getInstance().sprintOff();
+            if(ev.keycode == key_up)        Mario::getInstance().jump();
 
-            if(movingRight) mario.moveRight(NEXT_HEIGHT);
-            if(movingLeft) mario.moveLeft(PREV_HEIGHT);
-            mario.fall(CURRENT_HEIGHT);
+            if(movingRight) Mario::getInstance().moveRight(NEXT_HEIGHT);
+            if(movingLeft) Mario::getInstance().moveLeft(PREV_HEIGHT);
+            Mario::getInstance().fall(CURRENT_HEIGHT);
+
             for(Enemy* it : enemies)
             {
                 if(ev.keycode == key_up)
                     it->jump();
-                it->setMarioPos(mario.getPosition());
                 it->move(WINDOW_HEIGHT - level.at(((it->getDistance())/50))->getHeight(),
-                         WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight(),
-                         mario.getDistance());
+                         WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight());
                 it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
             }
             died = collided() || fallen();
             if(died)
             {
-                mario.setSpeed(0);
-                mario.jump();
+                Mario::getInstance().setSpeed(0);
+                Mario::getInstance().jump();
             }
-            win = mario.getDistance() == castleDistance-100;
+            win = Mario::getInstance().getDistance() == castleDistance-100;
             if(win) return false;
         }
         draw();
     }
-    mario.decrementHealth();
+    Mario::getInstance().decrementHealth();
     return true;
 }
 
@@ -159,15 +160,17 @@ void Game::generateTerrain()
     {
         addGround();
 
-        int r = rand() % 7;
+        int r = rand() % 9;
         switch(r){
             case 0: addPipe();      addGround(); break;
             case 1: addSmallPipe(); addGround(); break;
-            case 2: addCliff();     addGround(); break;
-            case 3: addHill();      addGround(); break;
-            case 4: addMediumHill();addGround(); break;
-            case 5: addStair();     addGround(); break;
-            case 6: addDownStair(); addGround(); break;
+            case 2: addHighPipe();  addGround(); break;
+            case 3: addCliff();     addGround(); break;
+            case 4: addHill();      addGround(); break;
+            case 5: addMediumHill();addGround(); break;
+            case 6: addHighHill();  addGround(); break;
+            case 7: addStair();     addGround(); break;
+            case 8: addDownStair(); addGround(); break;
         }
     }
 
@@ -216,6 +219,20 @@ void Game::addSmallPipe()
     for(int i = 0; i < r; i++)  level.push_back(new Ground());
 }
 
+void Game::addHighPipe()
+{
+    int r = rand() % 3;
+    for(int i = 1; i < r; i++)  level.push_back(new Ground());
+
+    level.push_back(new Pipe());
+    level.push_back(new PipeHelper());
+    level.push_back(new HighPipe());
+    level.push_back(new HighPipeHelper());
+
+    r = rand() % 3;
+    for(int i = 0; i < r; i++)  level.push_back(new Ground());
+}
+
 void Game::addCliff()
 {
     int r = rand() % difficulty + 1;
@@ -258,6 +275,17 @@ void Game::addMediumHill()
     level.push_back(new MediumHillEnd());
 }
 
+void Game::addHighHill()
+{
+    level.push_back(new HighHillBegin());
+    int r = rand() % 6;
+    for(int i=0; i < r; i++)
+    {
+        level.push_back(new HighHill());
+    }
+    level.push_back(new HighHillEnd());
+}
+
 void Game::addStair()
 {
     int r = rand() % difficulty+2;
@@ -290,6 +318,21 @@ void Game::addDownStair()
     }
 }
 
+std::vector<int> Game::posOfPipes()
+{
+    std::vector<int> posOfPipes;
+    for(int i = 0; i < level.size(); i++)
+    {
+        if(level.at(i)->getType() == "pipe" ||
+           level.at(i)->getType() == "lowpipe" ||
+           level.at(i)->getType() == "highpipe")
+        {
+            posOfPipes.push_back(i);
+        }
+    }
+    return posOfPipes;
+}
+
 void Game::generateEnemies()
 {
     for(Enemy* it : enemies)
@@ -298,11 +341,13 @@ void Game::generateEnemies()
     }
     enemies.clear();
 
-    for(int i=0; i < difficulty*10; i++)
+    for(int i=0; i < 10; i++)
     {
-        int r = rand() % numberOfEnemieTypes-4+difficulty;
+        int r = 8;//rand() % numberOfEnemieTypes-4+difficulty;
         int temp = (level.size()*50) - castleDistance;
         int pos = (rand() % ((level.size()*50)-temp-700)) + 600;
+        int pipe = rand() % posOfPipes().size();
+
         switch(r){
             case 0: enemies.push_back(new Goomba(pos)); break;
             case 1: enemies.push_back(new Koopa(pos)); break;
@@ -312,6 +357,8 @@ void Game::generateEnemies()
             case 5: enemies.push_back(new BlackKoopa(pos)); break;
             case 6: enemies.push_back(new Spiny(pos)); break;
             case 7: enemies.push_back(new Boo(pos)); break;
+            case 8: enemies.push_back(new PiranhaPlant( posOfPipes().at(pipe)*50 + 17,
+                                                        level.at(posOfPipes().at(pipe))->getPosition().y)); break;
         }
     }
 }
@@ -320,17 +367,11 @@ bool Game::collided()
 {
     for(std::list<Enemy*>::iterator it = enemies.begin(); it != enemies.end(); it++)
     {
-        if(mario.getDistance()+25 >= (*it)->getDistance()-25 &&
-           mario.getDistance()-25 <= (*it)->getDistance()+25 &&
-           mario.getPosition().y + mario.getHeight() == (*it)->getPosition().y + (*it)->getHeight())
-        {
-            return true;
-        }
-        else if(mario.getDistance()+25 >= (*it)->getDistance()-25 &&
-           mario.getDistance()-25 <= (*it)->getDistance()+25 &&
-           mario.getPosition().y + mario.getHeight() <= (*it)->getPosition().y+10 &&
-           mario.getPosition().y + mario.getHeight() >= (*it)->getPosition().y-10 &&
-           mario.getSpeed() > 0 )
+        if(Mario::getInstance().getDistance()+25 >= (*it)->getDistance()-25 &&
+           Mario::getInstance().getDistance()-25 <= (*it)->getDistance()+25 &&
+           Mario::getInstance().getPosition().y + Mario::getInstance().getHeight() <= (*it)->getPosition().y+10 &&
+           Mario::getInstance().getPosition().y + Mario::getInstance().getHeight() >= (*it)->getPosition().y-10 &&
+           Mario::getInstance().getSpeed() > 0 )
         {
             if((*it)->isThorned()) return true;
             else
@@ -338,13 +379,20 @@ bool Game::collided()
                 (*it)->decrementHealth();
                 if((*it)->getHealth() == 0)
                 {
-                    mario.addScore((*it)->getValue()*difficulty);
+                    Mario::getInstance().addScore((*it)->getValue()*difficulty);
                     delete (*it);
                     enemies.erase(it);
                 }
-                mario.zeroSpeed();
-                mario.jump();
+                Mario::getInstance().zeroSpeed();
+                Mario::getInstance().jump();
             }
+        }
+        else if(Mario::getInstance().getDistance()+25 >= (*it)->getDistance()-25 &&
+           Mario::getInstance().getDistance()-25 <= (*it)->getDistance()+25 &&
+           Mario::getInstance().getPosition().y < (*it)->getPosition().y + (*it)->getHeight() &&
+           Mario::getInstance().getPosition().y + Mario::getInstance().getHeight() > (*it)->getPosition().y)
+        {
+            return true;
         }
     }
     return false;
@@ -352,7 +400,7 @@ bool Game::collided()
 
 bool Game::fallen()
 {
-    return (mario.getPosition().y > WINDOW_HEIGHT);
+    return (Mario::getInstance().getPosition().y > WINDOW_HEIGHT);
 }
 
 void Game::run()
@@ -390,7 +438,7 @@ void Game::drawCursor()
 
 void Game::executeMenuElement()
 {
-    if(actualMenu->at(cursor) == "newgame")         { mario.init(); PlaySound(TEXT("music/overworld.wav"),NULL,SND_ASYNC);while(newGame()); PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);}
+    if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init(); PlaySound(TEXT("music/overworld.wav"),NULL,SND_ASYNC);while(newGame()); PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);}
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       quitGame = true;
@@ -406,10 +454,10 @@ void Game::executeMenuElement()
 void Game::draw()
 {
     drawBackgound();
+    drawEnemies();
     drawLevel();
     drawMario();
     drawHud();
-    drawEnemies();
 
     gout << refresh;
 }
@@ -422,35 +470,35 @@ void Game::drawBackgound()
 
 void Game::drawMario()
 {
-    if(mario.getSpeed() != 0 && movingRight)
-        gout << stamp(marioTextureMap[character].at(5),mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getSpeed() != 0 && movingLeft)
-        gout << stamp(marioTextureMap[character].at(4),mario.getPosition().x,mario.getPosition().y);
+    if(Mario::getInstance().getSpeed() != 0 && movingRight)
+        gout << stamp(marioTextureMap[character].at(5),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
+    else if(Mario::getInstance().getSpeed() != 0 && movingLeft)
+        gout << stamp(marioTextureMap[character].at(4),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
     else if(movingLeft && (ev.time / 30) % 10 < 5)
-        gout << stamp(marioTextureMap[character].at(0),mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(0),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
     else if(movingLeft && (ev.time / 30) % 10 >= 5)
-        gout << stamp(marioTextureMap[character].at(2),mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(2),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 < 5)
-        gout << stamp(marioTextureMap[character].at(1),mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(1),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
     else if(movingRight && (ev.time / 30) % 10 >= 5)
-        gout << stamp(marioTextureMap[character].at(3),mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getSpeed() != 0 && !mario.isMovingLeft())
-        gout << stamp(marioTextureMap[character].at(5),mario.getPosition().x,mario.getPosition().y);
-    else if(mario.getSpeed() != 0 && mario.isMovingLeft())
-        gout << stamp(marioTextureMap[character].at(4),mario.getPosition().x,mario.getPosition().y);
-    else if(mario.isMovingLeft())
-        gout << stamp(marioTextureMap[character].at(0),mario.getPosition().x,mario.getPosition().y);
-    else if(!mario.isMovingLeft())
-        gout << stamp(marioTextureMap[character].at(1),mario.getPosition().x,mario.getPosition().y);
+        gout << stamp(marioTextureMap[character].at(3),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
+    else if(Mario::getInstance().getSpeed() != 0 && !Mario::getInstance().isMovingLeft())
+        gout << stamp(marioTextureMap[character].at(5),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
+    else if(Mario::getInstance().getSpeed() != 0 && Mario::getInstance().isMovingLeft())
+        gout << stamp(marioTextureMap[character].at(4),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
+    else if(Mario::getInstance().isMovingLeft())
+        gout << stamp(marioTextureMap[character].at(0),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
+    else if(!Mario::getInstance().isMovingLeft())
+        gout << stamp(marioTextureMap[character].at(1),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
 }
 
 void Game::drawHud()
 {
     std::string health,score;
     std::ostringstream temph,temps;
-    temph<<mario.getHealth();
+    temph<<Mario::getInstance().getHealth();
     health=temph.str();
-    temps<<mario.getScore();
+    temps<<Mario::getInstance().getScore();
     score=temps.str();
 
     gout << stamp(terrainTextureMap["life"],50,20);
@@ -466,6 +514,7 @@ void Game::drawLevel()
     {
         if(it->getType() != "pipehelper" &&
            it->getType() != "smallpipehelper" &&
+           it->getType() != "highpipehelper" &&
            it->getType() != "endhelper"  &&
            it->getType() != "cliff"      &&
            it->getType() != "castlehelper")
@@ -476,7 +525,7 @@ void Game::drawLevel()
 
 void Game::drawTerrain(std::string type, int height, int offset)
 {
-    gout << stamp(terrainTextureMap[type], offset-mario.getDistance(),WINDOW_HEIGHT-height);
+    gout << stamp(terrainTextureMap[type], offset-Mario::getInstance().getDistance(),WINDOW_HEIGHT-height);
 }
 
 void Game::drawEnemies()
@@ -490,13 +539,13 @@ void Game::drawEnemies()
 void Game::drawEnemy(std::string type, int distance, int y, bool isMovingLeft, bool timer)
 {
     if(!isMovingLeft && timer)
-            gout << stamp(enemyTextureMap[type].at(0), 500 + distance - mario.getDistance(), y);
+            gout << stamp(enemyTextureMap[type].at(0), 500 + distance - Mario::getInstance().getDistance(), y);
     else if(isMovingLeft && timer)
-            gout << stamp(enemyTextureMap[type].at(1), 500 + distance - mario.getDistance(), y);
+            gout << stamp(enemyTextureMap[type].at(1), 500 + distance - Mario::getInstance().getDistance(), y);
     else if(!isMovingLeft && !timer)
-            gout << stamp(enemyTextureMap[type].at(2), 500 + distance - mario.getDistance(), y);
+            gout << stamp(enemyTextureMap[type].at(2), 500 + distance - Mario::getInstance().getDistance(), y);
     else if(isMovingLeft && !timer)
-            gout << stamp(enemyTextureMap[type].at(3), 500 + distance - mario.getDistance(), y);
+            gout << stamp(enemyTextureMap[type].at(3), 500 + distance - Mario::getInstance().getDistance(), y);
 }
 
 void Game::readTexture(std::string filename, canvas& texture)

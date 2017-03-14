@@ -17,7 +17,7 @@ public:
 
     void setPosition(int x, int y);
     void setPosition(Position pos);
-    int getHeight() {return height;}
+    virtual int getHeight() {return height;}
 
 protected:
     Position position;

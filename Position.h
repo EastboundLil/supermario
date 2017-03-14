@@ -4,10 +4,10 @@
 struct Position
 {
     Position() : x(0), y(0) {}
-    Position(int x, int y) : x(x), y(y) {}
+    Position(double x, double y) : x(x), y(y) {}
 
-    int x;
-    int y;
+    double x;
+    double y;
 };
 
 #endif // POSITION_H

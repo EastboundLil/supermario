@@ -1,5 +1,12 @@
 #include "Mario.h"
 
+Mario& Mario::getInstance()
+{
+    static Mario instance;
+
+    return instance;
+}
+
 Mario::Mario() :
     Enemy(Position(100,116), "mario", 0, 93, 300, 5),
     score(0)
@@ -20,7 +27,6 @@ void Mario::moveRight(int next)
 {
     if(next >= position.y + height)
     {
-        LOG("sprint: " << sprint);
         distance += horizontalSpeed + sprint;
     }
     movingLeft = false;

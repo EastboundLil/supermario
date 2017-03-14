@@ -8,7 +8,9 @@
 class Mario : public Enemy
 {
 public:
-    Mario();
+    static Mario& getInstance();
+    Mario(Mario const&) = delete;
+    void operator=(Mario const&) = delete;
 
     void reset(int x, int y);
     void init() {health = 2; score = 0;}
@@ -28,6 +30,10 @@ public:
 
 
 private:
+    Mario();
+//    Mario(Mario const&);
+//    void operator=(Mario const&);
+
     int score;
     int sprint;
 };

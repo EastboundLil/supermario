@@ -4,10 +4,12 @@
 #include "Terrain.h"
 #include <cmath>
 
+#define PI 3.14159265
+
 class Enemy : public Terrain
 {
 public:
-    Enemy(Position pos, std::string type, int value, int height, int distance, int horizontalSpeed) :
+    Enemy(Position pos, std::string type, int value, int height, double distance, int horizontalSpeed) :
         Terrain(pos, type, height),
         value(value),
         distance(distance),
@@ -21,7 +23,7 @@ public:
 
     }
 
-    virtual void move(int prev, int next, int distance)
+    virtual void move(int prev, int next)
     {
         if(movingLeft) moveLeft(prev);
         else moveRight(next);
@@ -67,11 +69,6 @@ public:
         }
     }
 
-    virtual void setMarioPos(Position pos)
-    {
-        //do nothing
-    }
-
     virtual ~Enemy() {};
 
     int     getDistance()   {return distance;}
@@ -87,14 +84,15 @@ public:
     void setHealth(int h)   {health = h;}
 
 protected:
-    int     distance;
+    int     value;
+    double  distance;
     int     horizontalSpeed;
     int     acceleration;
     int     speed;
     bool    movingLeft;
     int     health;
     bool    thorned;
-    int     value;
+
 };
 
 #endif // ENEMY_H

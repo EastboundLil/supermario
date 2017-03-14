@@ -70,9 +70,9 @@ protected:
 public:
     YellowKoopa(int distance) : RedKoopa(distance, "yellowkoopa", 250) { horizontalSpeed = 3; }
 
-    void move(int prev, int next, int marioDist)
+    void move(int prev, int next)
     {
-        if(marioDist < distance) moveLeft(prev);
+        if(Mario::getInstance().getDistance() < distance) moveLeft(prev);
         else moveRight(next);
     }
 
@@ -122,44 +122,85 @@ class Boo : public YellowKoopa
 public:
     Boo(int distance) : YellowKoopa(distance,"boo",0) { height = 50; thorned = true;}
 
-    void move(int prev, int next, int marioDist)
+    void move(int prev, int next)
     {
-        if(marioDist < distance) moveLeft(marioDist);
-        else moveRight(marioDist);
+        if(Mario::getInstance().getDistance() < distance) moveLeft();
+        else moveRight();
     }
 
-    void moveRight(int marioDist)
+    void moveRight()
     {
-        distance += horizontalSpeed;
-        double d = sqrt(pow(distance - marioDist,2) + pow(position.y - marioPos.y,2));
-        double x = marioDist - distance;
-        double y = marioPos.y - position.y;
-        distance += x/d;
-        position.y += y/d;
-        movingLeft = false;
+        if(!(Mario::getInstance().isMovingLeft()))
+        {
+            double d = sqrt(pow(distance - Mario::getInstance().getDistance(),2) +
+                pow(position.y - Mario::getInstance().getPosition().y+30,2));
+            double x = Mario::getInstance().getDistance() - distance;
+            double y = Mario::getInstance().getPosition().y+30 - position.y;
+            distance += x/d;
+            position.y += y/d;
+            movingLeft = false;
+        }
     }
 
-    void moveLeft(int marioDist)
+    void moveLeft()
     {
-        distance -= horizontalSpeed;
-        double d = sqrt(pow(distance - marioDist,2) + pow(position.y - marioPos.y,2));
-        double x = marioDist - distance;
-        double y = marioPos.y - position.y;
-        distance += x/d;
-        position.y += y/d;
-        movingLeft = true;
+        if(Mario::getInstance().isMovingLeft())
+        {
+            double d = sqrt(pow(distance - Mario::getInstance().getDistance(),2) +
+                pow(position.y - Mario::getInstance().getPosition().y+30,2));
+            double x = Mario::getInstance().getDistance() - distance;
+            double y = Mario::getInstance().getPosition().y+30 - position.y;
+            distance += x/d;
+            position.y += y/d;
+            movingLeft = true;
+        }
     }
 
     void fall(int groundLevel)
     {
         //do nothing
     }
+};
 
-     void setMarioPos(Position pos)
+class PiranhaPlant : public Enemy
+{
+public:
+    PiranhaPlant(int distance, int height) : Enemy(Position(800,(2*height)+10), "piranhaplant", 0, 100, distance, 0),
+                                             tick(0) {speed = 1;}
+
+    void move(int prev, int next)
     {
-        marioPos = pos;
+        if(sin(tick*PI/frequency) > 0.75)
+        {
+            tick++;
+        }
+        else if(sin(tick*PI/frequency) < 0.75 && sin(tick*PI/frequency) > -0.75 )
+        {
+            position.y += speed;
+            tick++;
+        }
+        else if(sin(tick*PI/frequency) < -0.75)
+        {
+            tick++;
+        }
+        if(sin(tick*PI/frequency) > 0.75)
+        {
+            speed = 1;
+        }
+        else if(sin(tick*PI/frequency) < -0.75)
+        {
+            speed = -1;
+        }
+    }
+
+    void fall(int groundLevel)
+    {
+        //do nothing
     }
 private:
-    Position marioPos;
+    int tick;
+    int frequency = 300;
+    int ground;
 };
+
 #endif // ENEMYTYPES_H

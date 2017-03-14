@@ -33,11 +33,15 @@ private:
     void addGround();
     void addPipe();
     void addSmallPipe();
+    void addHighPipe();
     void addCliff();
     void addHill();
     void addMediumHill();
+    void addHighHill();
     void addStair();
     void addDownStair();
+
+    std::vector<int> posOfPipes();
 
     bool collided();
     bool fallen();
@@ -81,7 +85,7 @@ private:
     int numberOfMarioTypes;
 
     event ev;
-    Mario mario;
+    //Mario mario;
 
     std::fstream f;
 

@@ -34,6 +34,18 @@ public:
     SmallPipeHelper() : Terrain(Position(), "smallpipehelper", 180) {}
 };
 
+class HighPipe : public Terrain
+{
+public:
+    HighPipe() : Terrain(Position(), "highpipe", 410) {}
+};
+
+class HighPipeHelper : public Terrain
+{
+public:
+    HighPipeHelper() : Terrain(Position(), "highpipehelper", 410) {}
+};
+
 class End : public Terrain
 {
 public:
@@ -98,6 +110,24 @@ class MediumHillEnd : public Terrain
 {
 public:
     MediumHillEnd() :  Terrain(Position(), "mediumhillend", 150) {}
+};
+
+class HighHillBegin : public Terrain
+{
+public:
+    HighHillBegin() :  Terrain(Position(), "highhillbegin", 200) {}
+};
+
+class HighHill : public Terrain
+{
+public:
+    HighHill() :  Terrain(Position(), "highhill", 200) {}
+};
+
+class HighHillEnd : public Terrain
+{
+public:
+    HighHillEnd() :  Terrain(Position(), "highhillend", 200) {}
 };
 
 class Stair : public Terrain
