@@ -321,7 +321,7 @@ void Game::addDownStair()
 std::vector<int> Game::posOfPipes()
 {
     std::vector<int> posOfPipes;
-    for(int i = 0; i < level.size(); i++)
+    for(unsigned int i = 0; i < level.size(); i++)
     {
         if(level.at(i)->getType() == "pipe" ||
            level.at(i)->getType() == "lowpipe" ||
@@ -408,7 +408,7 @@ bool Game::fallen()
 
 void Game::run()
 {
-    PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);
+    musicbox.play();
     quitGame = false;
     cursor = 0;
     actualMenu = &mainMenu;
@@ -441,7 +441,7 @@ void Game::drawCursor()
 
 void Game::executeMenuElement()
 {
-    if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init(); PlaySound(TEXT("music/overworld.wav"),NULL,SND_ASYNC);while(newGame()); PlaySound(TEXT("music/menu.wav"),NULL,SND_ASYNC);}
+    if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init(); while(newGame());}
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       quitGame = true;

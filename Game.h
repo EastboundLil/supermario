@@ -11,10 +11,10 @@
 #include <time.h>
 #include <string>
 #include <sstream>
-#include <windows.h>
 #include "Mario.h"
 #include "TextureTypes.h"
 #include "EnemyTypes.h"
+#include "MusicBox.h"
 
 using namespace genv;
 
@@ -88,6 +88,7 @@ private:
     //Mario mario;
 
     std::fstream f;
+    MusicBox musicbox;
 
     bool movingRight = false;
     bool movingLeft = false;

@@ -62,10 +62,10 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1489497922 source:c:\git_repo\beadando\game.cpp
+1489523701 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
-1489484327 c:\git_repo\beadando\game.h
+1489523403 c:\git_repo\beadando\game.h
 	"graphics.hpp"
 	"Logger.h"
 	"fstream"
@@ -76,10 +76,10 @@
 	<time.h>
 	<string>
 	<sstream>
-	<windows.h>
 	"Mario.h"
 	"TextureTypes.h"
 	"EnemyTypes.h"
+	"MusicBox.h"
 
 1488878509 c:\git_repo\beadando\include\graphics.hpp
 	<string>
@@ -99,7 +99,7 @@
 
 1489475193 c:\git_repo\beadando\position.h
 
-1489488203 c:\git_repo\beadando\terrain.h
+1489522141 c:\git_repo\beadando\terrain.h
 	"Color.h"
 	"Position.h"
 	"graphics.hpp"
@@ -140,7 +140,7 @@
 1489474621 c:\git_repo\beadando\texturetypes.h
 	"Terrain.h"
 
-1489494444 c:\git_repo\beadando\enemy.h
+1489521532 c:\git_repo\beadando\enemy.h
 	"Terrain.h"
 	<cmath>
 
@@ -209,4 +209,229 @@
 
 1489431507 source:e:\git_repo\supermario\mario.cpp
 	"Mario.h"
+
+1489523715 c:\git_repo\beadando\musicbox.h
+	<SFML/Audio.hpp>
+
+1489525056 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio.hpp
+	<SFML/System.hpp>
+	<SFML/Audio/InputSoundFile.hpp>
+	<SFML/Audio/Listener.hpp>
+	<SFML/Audio/Music.hpp>
+	<SFML/Audio/OutputSoundFile.hpp>
+	<SFML/Audio/Sound.hpp>
+	<SFML/Audio/SoundBuffer.hpp>
+	<SFML/Audio/SoundBufferRecorder.hpp>
+	<SFML/Audio/SoundFileFactory.hpp>
+	<SFML/Audio/SoundFileReader.hpp>
+	<SFML/Audio/SoundFileWriter.hpp>
+	<SFML/Audio/SoundRecorder.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/Audio/SoundStream.hpp>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system.hpp
+	<SFML/Config.hpp>
+	<SFML/System/Clock.hpp>
+	<SFML/System/Err.hpp>
+	<SFML/System/FileInputStream.hpp>
+	<SFML/System/InputStream.hpp>
+	<SFML/System/Lock.hpp>
+	<SFML/System/MemoryInputStream.hpp>
+	<SFML/System/Mutex.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/Sleep.hpp>
+	<SFML/System/String.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/ThreadLocal.hpp>
+	<SFML/System/ThreadLocalPtr.hpp>
+	<SFML/System/Time.hpp>
+	<SFML/System/Utf.hpp>
+	<SFML/System/Vector2.hpp>
+	<SFML/System/Vector3.hpp>
+
+1489525056 c:\git_repo\beadando\sfml-2.4.2\include\sfml\config.hpp
+	"TargetConditionals.h"
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\clock.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\export.hpp
+	<SFML/Config.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\time.hpp
+	<SFML/System/Export.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\err.hpp
+	<SFML/System/Export.hpp>
+	<ostream>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\fileinputstream.hpp
+	<SFML/Config.hpp>
+	<SFML/System/Export.hpp>
+	<SFML/System/InputStream.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<cstdio>
+	<string>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\inputstream.hpp
+	<SFML/Config.hpp>
+	<SFML/System/Export.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\noncopyable.hpp
+	<SFML/System/Export.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\lock.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\memoryinputstream.hpp
+	<SFML/Config.hpp>
+	<SFML/System/InputStream.hpp>
+	<SFML/System/Export.hpp>
+	<cstdlib>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\mutex.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\sleep.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Time.hpp>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\string.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/Utf.hpp>
+	<iterator>
+	<locale>
+	<string>
+	<SFML/System/String.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\utf.hpp
+	<SFML/Config.hpp>
+	<algorithm>
+	<locale>
+	<string>
+	<cstdlib>
+	<SFML/System/Utf.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\utf.inl
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\string.inl
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\thread.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<cstdlib>
+	<SFML/System/Thread.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\thread.inl
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\threadlocal.hpp
+	<SFML/System/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<cstdlib>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\threadlocalptr.hpp
+	<SFML/System/ThreadLocal.hpp>
+	<SFML/System/ThreadLocalPtr.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\threadlocalptr.inl
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\vector2.hpp
+	<SFML/System/Vector2.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\vector2.inl
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\vector3.hpp
+	<SFML/System/Vector3.inl>
+
+1489525058 c:\git_repo\beadando\sfml-2.4.2\include\sfml\system\vector3.inl
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\inputsoundfile.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\export.hpp
+	<SFML/Config.hpp>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\listener.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/Vector3.hpp>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\music.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundStream.hpp>
+	<SFML/Audio/InputSoundFile.hpp>
+	<SFML/System/Mutex.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<vector>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundstream.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/Time.hpp>
+	<SFML/System/Mutex.hpp>
+	<cstdlib>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundsource.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Vector3.hpp>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\alresource.hpp
+	<SFML/Audio/Export.hpp>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\outputsoundfile.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/System/NonCopyable.hpp>
+	<string>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\sound.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundSource.hpp>
+	<SFML/System/Time.hpp>
+	<cstdlib>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundbuffer.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Time.hpp>
+	<string>
+	<vector>
+	<set>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundbufferrecorder.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/SoundBuffer.hpp>
+	<SFML/Audio/SoundRecorder.hpp>
+	<vector>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundrecorder.hpp
+	<SFML/Audio/Export.hpp>
+	<SFML/Audio/AlResource.hpp>
+	<SFML/System/Thread.hpp>
+	<SFML/System/Time.hpp>
+	<vector>
+	<string>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundfilefactory.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
+	<vector>
+	<SFML/Audio/SoundFileFactory.inl>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundfilefactory.inl
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundfilereader.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
+
+1489525057 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio\soundfilewriter.hpp
+	<SFML/Audio/Export.hpp>
+	<string>
 
