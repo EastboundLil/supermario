@@ -203,4 +203,39 @@ private:
     int ground;
 };
 
+class BulletBill : public Enemy
+{
+public:
+    BulletBill(int distance, Position pos, bool isMarioLeft) : Enemy(pos, "bulletbill", 100, 43, distance, 8)
+                                                                {movingLeft = isMarioLeft;}
+
+
+    virtual void moveRight(int next)
+    {
+        distance += horizontalSpeed;
+        position.x += horizontalSpeed;
+    }
+
+    virtual void moveLeft(int prev)
+    {
+        distance -= horizontalSpeed;
+        position.x -= horizontalSpeed;
+    }
+
+    void fall(int groundLevel)
+    {
+        //do nothing
+    }
+};
+
+class Cannon : public Enemy
+{
+public:
+    Cannon(int distance) : Enemy(Position(800,100), "cannon", 100, 46, distance, 0) { timer = 0; }
+
+private:
+    int timer;
+};
+
+
 #endif // ENEMYTYPES_H

@@ -22,6 +22,7 @@ class Game
 {
 public:
     Game();
+    ~Game();
     void run();
 
 private:
@@ -29,6 +30,8 @@ private:
     void generateLevel();
     void generateTerrain();
     void generateEnemies();
+
+    void selectWorld();
 
     void addGround();
     void addPipe();
@@ -72,20 +75,25 @@ private:
 
     std::vector<Terrain*> level;
     std::list<Enemy*> enemies;
-    std::map<std::string, canvas> terrainTextureMap;
+    std::map<std::string, canvas> menuTextureMap;
+    std::map<std::string, canvas>* terrainTextureMap;
+    std::map<std::string, canvas> overworldTextureMap;
+    std::map<std::string, canvas> undergroundTextureMap;
     std::map<std::string, std::vector<canvas> > enemyTextureMap;
-    std::map<std::string, std::vector<canvas> > marioTextureMap;
+    std::map<std::string, std::vector<canvas> > characterTextureMap;
 
-    std::vector<std::string> tt;
-    std::vector<std::string> et;
     std::vector<std::string> mt;
+    std::vector<std::string> tt;
+    std::vector<std::string> wt;
+    std::vector<std::string> et;
+    std::vector<std::string> ct;
 
+    int numberOfMenuTypes;
     int numberOfTerrainTypes;
     int numberOfEnemieTypes;
-    int numberOfMarioTypes;
+    int numberOfCharacterTypes;
 
     event ev;
-    //Mario mario;
 
     std::fstream f;
     MusicBox musicbox;
