@@ -11,8 +11,22 @@ Mario::Mario() :
     score(0)
 {
     movingLeft = false;
-    health = 2;
+    health = 1;
     sprint = 0;
+    life = 3;
+}
+
+void Mario::tickInvulnerability()
+{
+    if(invulnerable)
+    {
+        invTimer++;
+        if(invTimer == 200)
+        {
+            invulnerable = false;
+            invTimer = 0;
+        }
+    }
 }
 
 void Mario::reset(int x, int y)
@@ -20,6 +34,9 @@ void Mario::reset(int x, int y)
     setPosition(x,y);
     distance = 300;
     sprint = 0;
+    invTimer = 0;
+    invulnerable = false;
+    health = 1;
 }
 
 void Mario::moveRight(int next)

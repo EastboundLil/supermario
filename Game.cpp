@@ -15,7 +15,7 @@ Game::Game() :
     difficultyMenu = { "easy", "medium", "hard", "brutal" };
     characterMenu = { "mariohead","flashhead","empire","snoopyhead"};
 
-    mt = {  "life","mariohead","flashhead","empire","snoopyhead","menubackground","cursor",
+    mt = {  "life","health","mariohead","flashhead","empire","snoopyhead","menubackground","cursor",
             "newgame","difficulty","character","quit","easy","medium","hard","brutal"};
     tt = {  "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
             "highhillbegin","highhill","highhillend","pipe","pipehelper","smallpipe","smallpipehelper","highpipe","highpipehelper",
@@ -24,7 +24,7 @@ Game::Game() :
     et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny","boo","piranhaplant",
             "cannon","bulletbill"};
     ct = {  "mario","flash","vader","snoopy"};
-    pt = {  "1up"};
+    pt = {  "1up","bigmushroom"};
 
     numberOfMenuTypes = mt.size();
     numberOfTerrainTypes = tt.size();
@@ -105,7 +105,7 @@ bool Game::newGame()
             if(ev.keycode == -key_left)     movingLeft = false;
             if(ev.keycode == key_space)     Mario::getInstance().sprintOn();
             if(ev.keycode == -key_space)    Mario::getInstance().sprintOff();
-            if(ev.keycode == key_up)        Mario::getInstance().jump();
+            if(ev.keycode == key_up)        { Mario::getInstance().jump(); musicbox.playJumpSound(); }
 
             if(movingRight) Mario::getInstance().moveRight(NEXT_HEIGHT);
             if(movingLeft) Mario::getInstance().moveLeft(PREV_HEIGHT);
@@ -132,6 +132,7 @@ bool Game::newGame()
 
 
             died = collided() || fallen();
+            Mario::getInstance().tickInvulnerability();
             if(died)
             {
                 Mario::getInstance().setSpeed(0);
@@ -155,8 +156,8 @@ bool Game::newGame()
         selectWorld();
         return true;
     }
-    Mario::getInstance().decrementHealth();
-    if(Mario::getInstance().getHealth() == -1) return false;
+    Mario::getInstance().decrementLife();
+    if(Mario::getInstance().getLife() == -1) return false;
 
     return true;
 }
@@ -429,10 +430,14 @@ bool Game::collided()
             else
             {
                 (*it)->decrementHealth();
+                musicbox.playKillSound();
                 if((*it)->getHealth() == 0)
                 {
+                    int r = rand() % 20;
+                    if(r == 0)      powerUps.push_back(new oneUp((*it)->getDistance(), (*it)->getPosition()));
+                    else if(r == 1) powerUps.push_back(new BigMushroom((*it)->getDistance(), (*it)->getPosition()));
+
                     Mario::getInstance().addScore((*it)->getValue()*difficulty);
-                    if(rand() % 10 == 0) powerUps.push_back(new oneUp((*it)->getDistance(), (*it)->getPosition()));
                     delete (*it);
                     enemies.erase(it);
                 }
@@ -444,9 +449,16 @@ bool Game::collided()
            Mario::getInstance().getDistance()-25 <= (*it)->getDistance()+25 &&
            Mario::getInstance().getPosition().y < (*it)->getPosition().y + (*it)->getHeight() &&
            Mario::getInstance().getPosition().y + Mario::getInstance().getHeight() > (*it)->getPosition().y &&
-           (*it)->getType() != "cannon")
+           (*it)->getType() != "cannon" && !(Mario::getInstance().isInvulnerable()))
         {
-            return true;
+            Mario::getInstance().decrementHealth();
+            if(Mario::getInstance().getHealth() == 0)
+            {
+                musicbox.playDeathSound();
+                return true;
+            }
+            musicbox.playDamageSound();
+            Mario::getInstance().triggerInvulnerability();
         }
         else if((*it)->getDistance() < 50 ||
                 (*it)->getDistance() > castleDistance + 50 ||
@@ -465,7 +477,15 @@ bool Game::collided()
         {
             if((*it)->getType() == "1up")
             {
+                Mario::getInstance().incrementLife();
+                musicbox.playOneUpSound();
+                delete (*it);
+                powerUps.erase(it);
+            }
+            if((*it)->getType() == "bigmushroom")
+            {
                 Mario::getInstance().incrementHealth();
+                musicbox.playBigMushroomSound();
                 delete (*it);
                 powerUps.erase(it);
             }
@@ -491,6 +511,7 @@ void Game::run()
         if(ev.keycode == key_down)  if(cursor != actualMenu->size()-1) cursor++;
         if(ev.keycode == key_escape) actualMenu = &mainMenu;
         if(ev.keycode == key_enter) executeMenuElement();
+        if(ev.type == ev_key) musicbox.playMenuSound();
 
         drawMenu();
         drawCursor();
@@ -551,7 +572,8 @@ void Game::drawBackgound()
 
 void Game::drawMario()
 {
-    if(Mario::getInstance().getSpeed() != 0 && movingRight)
+    if(Mario::getInstance().isInvulnerable() && (ev.time / 30) % 10 < 5) return;
+    else if(Mario::getInstance().getSpeed() != 0 && movingRight)
         gout << stamp(characterTextureMap[character].at(5),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
     else if(Mario::getInstance().getSpeed() != 0 && movingLeft)
         gout << stamp(characterTextureMap[character].at(4),Mario::getInstance().getPosition().x,Mario::getInstance().getPosition().y);
@@ -577,7 +599,7 @@ void Game::drawHud()
 {
     std::string health,score;
     std::ostringstream temph,temps;
-    temph<<Mario::getInstance().getHealth();
+    temph<<Mario::getInstance().getLife();
     health=temph.str();
     temps<<Mario::getInstance().getScore();
     score=temps.str();
@@ -586,6 +608,11 @@ void Game::drawHud()
     gout << color(255,255,255);
     gout << move_to(110,40) << text("X ") << text(health);
     gout << move_to(160,40) << text("Score: ") <<text(score);
+
+    for(int i = 0; i < Mario::getInstance().getHealth() - 1; i++)
+    {
+        gout << stamp(menuTextureMap["health"],300 + i*60,20);
+    }
 }
 
 void Game::drawLevel()

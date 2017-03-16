@@ -1,7 +1,6 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include "Color.h"
 #include "Position.h"
 #include "graphics.hpp"
 #include "Widget.h"

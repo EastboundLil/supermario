@@ -15,4 +15,10 @@ public:
     oneUp(int distance, Position pos) : PowerUp("1up",distance,pos) {}
 };
 
+class BigMushroom : public PowerUp
+{
+public:
+    BigMushroom(int distance, Position pos) : PowerUp("bigmushroom",distance,pos) {}
+};
+
 #endif // POWERUPS_H
