@@ -14,6 +14,7 @@
 #include "Mario.h"
 #include "TextureTypes.h"
 #include "EnemyTypes.h"
+#include "PowerUps.h"
 #include "MusicBox.h"
 
 using namespace genv;
@@ -55,6 +56,7 @@ private:
     void drawHud();
     void drawLevel();
     void drawEnemies();
+    void drawPowerUps();
 
     void drawMenu();
     void drawCursor();
@@ -75,18 +77,22 @@ private:
 
     std::vector<Terrain*> level;
     std::list<Enemy*> enemies;
+    std::list<PowerUp*> powerUps;
+
     std::map<std::string, canvas> menuTextureMap;
     std::map<std::string, canvas>* terrainTextureMap;
     std::map<std::string, canvas> overworldTextureMap;
     std::map<std::string, canvas> undergroundTextureMap;
     std::map<std::string, std::vector<canvas> > enemyTextureMap;
     std::map<std::string, std::vector<canvas> > characterTextureMap;
+    std::map<std::string, canvas> powerUpTextureMap;
 
     std::vector<std::string> mt;
     std::vector<std::string> tt;
     std::vector<std::string> wt;
     std::vector<std::string> et;
     std::vector<std::string> ct;
+    std::vector<std::string> pt;
 
     int numberOfMenuTypes;
     int numberOfTerrainTypes;

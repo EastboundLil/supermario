@@ -51,13 +51,9 @@
 			<Add library="SFML-2.4.2/lib/libvorbis.a" />
 			<Add library="SFML-2.4.2/lib/libogg.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-audio-d.a" />
-			<Add library="SFML-2.4.2/lib/libFLAC.a" />
 			<Add library="SFML-2.4.2/lib/libfreetype.a" />
 			<Add library="SFML-2.4.2/lib/libjpeg.a" />
-			<Add library="SFML-2.4.2/lib/libogg.a" />
-			<Add library="SFML-2.4.2/lib/libopenal32.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-audio.a" />
-			<Add library="SFML-2.4.2/lib/libsfml-audio-d.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-audio-s.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-audio-s-d.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-graphics.a" />
@@ -72,15 +68,11 @@
 			<Add library="SFML-2.4.2/lib/libsfml-network-s-d.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-system.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-system-d.a" />
-			<Add library="SFML-2.4.2/lib/libsfml-system-s.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-system-s-d.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-window.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-window-d.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-window-s.a" />
 			<Add library="SFML-2.4.2/lib/libsfml-window-s-d.a" />
-			<Add library="SFML-2.4.2/lib/libvorbis.a" />
-			<Add library="SFML-2.4.2/lib/libvorbisenc.a" />
-			<Add library="SFML-2.4.2/lib/libvorbisfile.a" />
 			<Add directory="lib" />
 			<Add directory="SFML-2.4.2/lib" />
 		</Linker>
@@ -100,6 +92,7 @@
 		<Unit filename="Position.h">
 			<Option target="Debug" />
 		</Unit>
+		<Unit filename="PowerUps.h" />
 		<Unit filename="Terrain.cpp" />
 		<Unit filename="Terrain.h" />
 		<Unit filename="TextureTypes.h" />

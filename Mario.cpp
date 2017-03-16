@@ -3,7 +3,6 @@
 Mario& Mario::getInstance()
 {
     static Mario instance;
-
     return instance;
 }
 

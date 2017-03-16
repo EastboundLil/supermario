@@ -24,6 +24,7 @@ Game::Game() :
     et = {  "goomba","koopa","redkoopa","bluekoopa","yellowkoopa","blackkoopa","spiny","boo","piranhaplant",
             "cannon","bulletbill"};
     ct = {  "mario","flash","vader","snoopy"};
+    pt = {  "1up"};
 
     numberOfMenuTypes = mt.size();
     numberOfTerrainTypes = tt.size();
@@ -33,6 +34,7 @@ Game::Game() :
     for(std::string s : tt) overworldTextureMap[s] = canvas();
     for(std::string s : tt) undergroundTextureMap[s] = canvas();
     for(std::string s : mt) menuTextureMap[s] = canvas();
+    for(std::string s : pt) powerUpTextureMap[s] = canvas();
 
     std::vector<canvas> c;
     c.push_back(canvas());
@@ -64,12 +66,12 @@ Game::Game() :
         readTexture("underground/" + u->first,u->second);
     for(std::map<std::string,std::vector<canvas> >::iterator e = enemyTextureMap.begin(); e != enemyTextureMap.end(); e++)
         readTexture("enemies/" + e->first,e->second.at(0),e->second.at(1),e->second.at(2),e->second.at(3));
+    for(std::map<std::string,canvas>::iterator p = powerUpTextureMap.begin(); p != powerUpTextureMap.end(); p++)
+        readTexture("powerups/" + p->first,p->second);
 }
 
 bool Game::newGame()
 {
-    if(Mario::getInstance().getHealth() == -1) return false;
-
     bool died = false;
     bool win = false;
 
@@ -121,6 +123,14 @@ bool Game::newGame()
                                                     it->getPosition(),
                                                     Mario::getInstance().getDistance() < it->getDistance()));
             }
+            for(PowerUp* it : powerUps)
+            {
+                it->move(WINDOW_HEIGHT - level.at(((it->getDistance())/50))->getHeight(),
+                         WINDOW_HEIGHT - level.at(((it->getDistance())/50)+1)->getHeight());
+                it->fall(WINDOW_HEIGHT - level.at((it->getDistance()+25)/50)->getHeight());
+            }
+
+
             died = collided() || fallen();
             if(died)
             {
@@ -128,7 +138,7 @@ bool Game::newGame()
                 Mario::getInstance().jump();
             }
             win = Mario::getInstance().getDistance() >= castleDistance-100;
-            if(win) return false;
+            if(win) break;
         }
 
         for(Enemy* e : bullets)
@@ -140,7 +150,14 @@ bool Game::newGame()
 
         draw();
     }
+    if(win)
+    {
+        selectWorld();
+        return true;
+    }
     Mario::getInstance().decrementHealth();
+    if(Mario::getInstance().getHealth() == -1) return false;
+
     return true;
 }
 
@@ -366,6 +383,13 @@ void Game::generateEnemies()
         delete it;
     }
     enemies.clear();
+
+    for(PowerUp* p : powerUps)
+    {
+        delete p;
+    }
+    powerUps.clear();
+
     for(int i=0; i < 15 + (difficulty * 3); i++)
     {
         int r = rand() % (2 + difficulty*2);
@@ -387,7 +411,6 @@ void Game::generateEnemies()
             case 7: enemies.push_back(new Spiny(pos)); break;
             case 8: enemies.push_back(new Cannon(pos)); break;
             case 9: enemies.push_back(new Boo(pos)); break;
-
         }
     }
 }
@@ -409,6 +432,7 @@ bool Game::collided()
                 if((*it)->getHealth() == 0)
                 {
                     Mario::getInstance().addScore((*it)->getValue()*difficulty);
+                    if(rand() % 10 == 0) powerUps.push_back(new oneUp((*it)->getDistance(), (*it)->getPosition()));
                     delete (*it);
                     enemies.erase(it);
                 }
@@ -430,6 +454,21 @@ bool Game::collided()
         {
             delete (*it);
             enemies.erase(it);
+        }
+    }
+    for(std::list<PowerUp*>::iterator it = powerUps.begin(); it != powerUps.end(); it++)
+    {
+        if(Mario::getInstance().getDistance()+25 >= (*it)->getDistance()-25 &&
+           Mario::getInstance().getDistance()-25 <= (*it)->getDistance()+25 &&
+           Mario::getInstance().getPosition().y < (*it)->getPosition().y + (*it)->getHeight() &&
+           Mario::getInstance().getPosition().y + Mario::getInstance().getHeight() > (*it)->getPosition().y)
+        {
+            if((*it)->getType() == "1up")
+            {
+                Mario::getInstance().incrementHealth();
+                delete (*it);
+                powerUps.erase(it);
+            }
         }
     }
     return false;
@@ -476,7 +515,9 @@ void Game::drawCursor()
 
 void Game::executeMenuElement()
 {
-    if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init(); selectWorld(); while(newGame()); musicbox.playMenuMusic();}
+    if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init();
+                                                      selectWorld();
+                                                      while(newGame()); musicbox.playMenuMusic();}
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       { quitGame = true; }
@@ -497,6 +538,7 @@ void Game::draw()
     drawLevel();
     drawMario();
     drawHud();
+    drawPowerUps();
 
     gout << refresh;
 }
@@ -587,6 +629,14 @@ void Game::drawEnemy(std::string type, int distance, int y, bool isMovingLeft, b
             gout << stamp(enemyTextureMap[type].at(3), 500 + distance - Mario::getInstance().getDistance(), y);
 }
 
+void Game::drawPowerUps()
+{
+    for(PowerUp* p : powerUps)
+    {
+        gout << stamp(powerUpTextureMap[p->getType()], 500 + p->getDistance() - Mario::getInstance().getDistance(), p->getPosition().y);
+    }
+}
+
 void Game::readTexture(std::string filename, canvas& texture)
 {
     filename = "pics/" + filename + ".kep";
@@ -665,4 +715,10 @@ void Game::readTexture(std::string filename, canvas& leftTexture, canvas& rightT
 Game::~Game()
 {
     terrainTextureMap = nullptr;
+    for(Enemy* it : enemies) delete it;
+    for(Terrain* it : level) delete it;
+    for(PowerUp* it : powerUps) delete it;
+    enemies.clear();
+    level.clear();
+    powerUps.clear();
 }

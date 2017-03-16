@@ -62,10 +62,10 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1489608274 source:c:\git_repo\beadando\game.cpp
+1489662009 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
-1489598200 c:\git_repo\beadando\game.h
+1489658515 c:\git_repo\beadando\game.h
 	"graphics.hpp"
 	"Logger.h"
 	"fstream"
@@ -79,6 +79,7 @@
 	"Mario.h"
 	"TextureTypes.h"
 	"EnemyTypes.h"
+	"PowerUps.h"
 	"MusicBox.h"
 
 1488878509 c:\git_repo\beadando\include\graphics.hpp
@@ -123,7 +124,7 @@
 1489588028 source:c:\git_repo\beadando\main.cpp
 	"Game.h"
 
-1489478665 source:c:\git_repo\beadando\mario.cpp
+1489661958 source:c:\git_repo\beadando\mario.cpp
 	"Mario.h"
 
 1488958131 source:c:\git_repo\beadando\terrain.cpp
@@ -140,7 +141,7 @@
 1489474621 c:\git_repo\beadando\texturetypes.h
 	"Terrain.h"
 
-1489602873 c:\git_repo\beadando\enemy.h
+1489657438 c:\git_repo\beadando\enemy.h
 	"Terrain.h"
 	<cmath>
 
@@ -661,4 +662,7 @@
 1486736397 e:\git_repo\supermario\sfml-2.4.2\include\sfml\audio\soundfilewriter.hpp
 	<SFML/Audio/Export.hpp>
 	<string>
+
+1489658977 c:\git_repo\beadando\powerups.h
+	"EnemyTypes.h"
 

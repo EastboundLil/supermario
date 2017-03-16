@@ -81,6 +81,7 @@ public:
     void zeroSpeed()        {speed = 0;}
     void changeDirection()  {movingLeft = !movingLeft;}
     void decrementHealth()  {health--;}
+    void incrementHealth()  {health++;}
     void setHealth(int h)   {health = h;}
 
 protected:
