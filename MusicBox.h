@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib>
 #include <sstream>
+#include "Logger.h"
 
 class MusicBox
 {

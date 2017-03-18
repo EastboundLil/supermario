@@ -62,10 +62,10 @@
 1488872901 source:c:\git_repo\graphicsproject\mario.cpp
 	"Mario.h"
 
-1489700198 source:c:\git_repo\beadando\game.cpp
+1489866392 source:c:\git_repo\beadando\game.cpp
 	"Game.h"
 
-1489658515 c:\git_repo\beadando\game.h
+1489865329 c:\git_repo\beadando\game.h
 	"graphics.hpp"
 	"Logger.h"
 	"fstream"
@@ -212,10 +212,11 @@
 1489569935 source:e:\git_repo\supermario\mario.cpp
 	"Mario.h"
 
-1489698944 c:\git_repo\beadando\musicbox.h
+1489732598 c:\git_repo\beadando\musicbox.h
 	<SFML/Audio.hpp>
 	<cstdlib>
 	<sstream>
+	"Logger.h"
 
 1489525056 c:\git_repo\beadando\sfml-2.4.2\include\sfml\audio.hpp
 	<SFML/System.hpp>
@@ -669,6 +670,6 @@
 
 1488273920 c:\git_repo\beadando\include\widget.h
 
-1489699018 source:c:\git_repo\beadando\musicbox.cpp
+1489733919 source:c:\git_repo\beadando\musicbox.cpp
 	"MusicBox.h"
 

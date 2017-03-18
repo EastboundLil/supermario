@@ -16,7 +16,7 @@ Game::Game() :
     characterMenu = { "mariohead","flashhead","empire","snoopyhead"};
 
     mt = {  "life","health","mariohead","flashhead","empire","snoopyhead","menubackground","cursor",
-            "newgame","difficulty","character","quit","easy","medium","hard","brutal"};
+            "newgame","difficulty","character","quit","easy","medium","hard","brutal","gameover"};
     tt = {  "background","ground","cliff","hillbegin","hill","hillend","mediumhillbegin","mediumhill","mediumhillend",
             "highhillbegin","highhill","highhillend","pipe","pipehelper","smallpipe","smallpipehelper","highpipe","highpipehelper",
             "end","endhelper","stair","stair2","stair3","stair4","stair5","castle","castlehelper"};
@@ -74,6 +74,7 @@ bool Game::newGame()
 {
     bool died = false;
     bool win = false;
+
 
     std::vector<Enemy*> bullets;
 
@@ -529,6 +530,14 @@ void Game::drawMenu()
     }
 }
 
+void Game::drawGameOver()
+{
+    menuTextureMap["gameover"].transparent(false);
+    gout    << stamp(menuTextureMap["gameover"],0,0);
+    gout << refresh;
+
+}
+
 void Game::drawCursor()
 {
     gout << stamp(menuTextureMap["cursor"], (WINDOW_WIDTH/2)-150, 350+(cursor*50));
@@ -538,7 +547,14 @@ void Game::executeMenuElement()
 {
     if(actualMenu->at(cursor) == "newgame")         { Mario::getInstance().init();
                                                       selectWorld();
-                                                      while(newGame()); musicbox.playMenuMusic();}
+                                                      while(newGame());
+                                                      int timer = ev.time + 3000;
+                                                      while(gin >> ev && ev.time != timer)
+                                                      {
+                                                          LOG(ev.time);
+                                                          drawGameOver();
+                                                      }
+                                                      musicbox.playMenuMusic();}
     else if(actualMenu->at(cursor) == "difficulty") { actualMenu = &difficultyMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "character")  { actualMenu = &characterMenu; cursor = 0; }
     else if(actualMenu->at(cursor) == "quit")       { quitGame = true; }

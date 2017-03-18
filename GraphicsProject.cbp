@@ -76,7 +76,6 @@
 			<Add directory="lib" />
 			<Add directory="SFML-2.4.2/lib" />
 		</Linker>
-		<Unit filename="Color.h" />
 		<Unit filename="Enemy.h" />
 		<Unit filename="EnemyTypes.h" />
 		<Unit filename="Game.cpp" />
@@ -88,6 +87,7 @@
 		<Unit filename="Mario.h">
 			<Option target="Debug" />
 		</Unit>
+		<Unit filename="MusicBox.cpp" />
 		<Unit filename="MusicBox.h" />
 		<Unit filename="Position.h">
 			<Option target="Debug" />

@@ -60,6 +60,7 @@ private:
 
     void drawMenu();
     void drawCursor();
+    void drawGameOver();
 
     void drawTerrain(std::string type, int height, int offset);
     void drawEnemy(std::string type, int distance, int y, bool isMovingLeft, bool timer);
